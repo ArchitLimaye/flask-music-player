@@ -1,0 +1,6 @@
+flask
+gunicorn
+jinja2
+werkzeug
+itsdangerous
+click
