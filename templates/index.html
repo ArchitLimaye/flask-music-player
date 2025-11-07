@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Music Player</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <!-- ✅ Sidebar FIRST (Fixes hover animation) -->
+  <div class="sidebar">
+    <div class="features">
+      <div class="feature">🎵 Feature 1</div>
+      <div class="feature">⭐ Feature 2</div>
+      <div class="feature">📂 Feature 3</div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="header-bar">
+    <a class="logo" href="{{ url_for('index') }}">🎵 MusicPlayer</a>
+
+    <div class="profile-container">
+      {% if 'user' in session %}
+        <div class="profile-wrapper">
+          <img src="{{ url_for('static', filename='images/profile_icon.png') }}" alt="Profile" class="profile-img">
+          <span class="profile-text">Hello, {{ session['user'] }} 👋</span>
+          <div class="dropdown">
+            <a href="{{ url_for('logout') }}">Logout</a>
+          </div>
+        </div>
+      {% else %}
+        <div class="profile-wrapper">
+          <img src="{{ url_for('static', filename='images/profile_icon.png') }}" alt="Profile" class="profile-img">
+          <span class="profile-text">
+            <a href="{{ url_for('login') }}">Login</a> /
+            <a href="{{ url_for('register') }}">Sign Up</a>
+          </span>
+        </div>
+      {% endif %}
+    </div>
+  </header>
+
+  <!-- Main Section -->
+  <div class="main">
+    <h1 class="title">🎶 Web Music Player</h1>
+
+    <form class="search-container" action="/search" method="get">
+      <input type="text" name="query" placeholder="Search for songs or artists..." required>
+      <button type="submit">🔍</button>
+    </form>
+
+    <div class="song-list">
+      {% for song in songs %}
+      <div class="song-card" onclick="window.location.href='/player/{{ song.id }}'">
+        <img src="{{ url_for('static', filename='images/' + song.image) }}" alt="{{ song.title }}">
+        <h3>{{ song.title }}</h3>
+        <p>{{ song.artist }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,243 @@
+/* ===== GLOBAL ===== */
+body {
+  background-color: #111;
+  color: white;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  display: flex;
+  overflow-x: hidden;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 70px; /* collapsed width */
+  height: 100vh;
+  background-color: #1e1e1e;
+  overflow: hidden;
+  transition: width 0.3s ease;
+  z-index: 50;
+}
+
+.sidebar:hover {
+  width: 200px; /* expanded width */
+}
+
+.features {
+  padding: 80px 10px 10px 10px; /* space below header */
+}
+
+.feature {
+  padding: 15px;
+  cursor: pointer;
+  color: #aaa;
+  transition: color 0.3s, transform 0.2s;
+  white-space: nowrap;
+}
+
+.feature:hover {
+  color: #00bfff;
+  transform: scale(1.05);
+}
+
+/* ===== HEADER BAR ===== */
+.header-bar {
+  position: fixed;
+  top: 0;
+  left: 70px; /* match collapsed sidebar */
+  right: 0;
+  height: 65px;
+  background: rgba(17, 17, 17, 0.9);
+  backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  z-index: 100;
+  transition: left 0.3s ease;
+}
+
+/* when sidebar expands, shift header */
+.sidebar:hover ~ .header-bar {
+  left: 200px;
+}
+
+/* ===== LOGO ===== */
+.logo {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #00bfff;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.logo:hover {
+  color: white;
+}
+
+/* ===== PROFILE SECTION ===== */
+.profile-container {
+  position: relative;
+}
+
+.profile-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+}
+
+.profile-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #00bfff;
+  transition: transform 0.2s;
+  cursor: pointer;
+}
+
+.profile-img:hover {
+  transform: scale(1.1);
+}
+
+.profile-text {
+  color: white;
+  font-size: 0.95rem;
+}
+
+.profile-text a {
+  color: #00bfff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.profile-text a:hover {
+  text-decoration: underline;
+}
+
+/* ===== DROPDOWN ===== */
+.dropdown {
+  display: none;
+  position: absolute;
+  top: 45px;
+  right: 0;
+  background: rgba(30,30,30,0.9);
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  padding: 10px;
+  min-width: 130px;
+}
+
+.dropdown a {
+  color: white;
+  text-decoration: none;
+  font-size: 0.9rem;
+  display: block;
+  padding: 5px 10px;
+}
+
+.dropdown a:hover {
+  color: #00bfff;
+}
+
+.profile-wrapper:hover .dropdown {
+  display: block;
+}
+
+/* subtle hover effect on profile wrapper */
+.profile-wrapper:hover {
+  background: rgba(255,255,255,0.05);
+  border-radius: 20px;
+  padding: 5px 10px;
+  transition: 0.3s;
+}
+
+/* ===== MAIN CONTENT ===== */
+.main {
+  flex: 1;
+  padding: 40px;
+  text-align: center;
+  margin-top: 90px;
+  margin-left: 70px; /* match sidebar collapsed */
+  transition: margin-left 0.3s ease;
+}
+
+/* when sidebar expands, push main content */
+.sidebar:hover ~ .main {
+  margin-left: 200px;
+}
+
+/* ===== TITLE ===== */
+.title {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+/* ===== SEARCH BAR ===== */
+.search-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+  gap: 10px;
+}
+
+.search-container input {
+  width: 300px;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  font-size: 1rem;
+}
+
+.search-container button {
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background-color: #333;
+  color: white;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.search-container button:hover {
+  background-color: #00bfff;
+}
+
+/* ===== SONG GRID ===== */
+.song-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.song-card {
+  width: 180px;
+  background-color: #1e1e1e;
+  border-radius: 15px;
+  padding: 15px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.song-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 10px rgba(0,191,255,0.3);
+}
+
+.song-card img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.song-card h3 {
+  margin: 10px 0 5px 0;
+}
+
+.song-card p {
+  color: #bbb;
+  font-size: 0.9rem;
+}

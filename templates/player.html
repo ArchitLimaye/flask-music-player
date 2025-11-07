@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ song.title }} - Player</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/player.css') }}">
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="features">
+    <div class="feature">🎵 Feature 1</div>
+    <div class="feature">⭐ Feature 2</div>
+    <div class="feature">📂 Feature 3</div>
+  </div>
+</div>
+
+<!-- Header -->
+<header class="header-bar">
+  <a class="logo" href="{{ url_for('index') }}">🎵 MusicPlayer</a>
+
+  <div class="profile-container">
+    {% if 'user' in session %}
+      <div class="profile-wrapper">
+        <img src="{{ url_for('static', filename='images/profile_icon.png') }}" alt="Profile" class="profile-img">
+        <span class="profile-text">Hello, {{ session['user'] }} 👋</span>
+        <div class="dropdown">
+          <a href="{{ url_for('logout') }}">Logout</a>
+        </div>
+      </div>
+    {% else %}
+      <div class="profile-wrapper">
+        <img src="{{ url_for('static', filename='images/profile_icon.png') }}" alt="Profile" class="profile-img">
+        <span class="profile-text">
+          <a href="{{ url_for('login') }}">Login</a> /
+          <a href="{{ url_for('register') }}">Sign Up</a>
+        </span>
+      </div>
+    {% endif %}
+  </div>
+</header>
+
+<!-- Main Player -->
+<div class="main">
+  <div class="main-container">
+    <form class="search-container" action="/search" method="get">
+      <input type="text" name="query" placeholder="Search for songs or artists..." required>
+      <button type="submit">🔍</button>
+    </form>
+
+    <div class="player-card">
+      <img src="{{ url_for('static', filename='images/' + song.image) }}" alt="{{ song.title }}" class="album-art">
+      <h2>{{ song.title }}</h2>
+      <p>{{ song.artist }}</p>
+
+      <!-- Controls -->
+      <div class="controls">
+        <button class="control-btn" onclick="prevSong()">⏮</button>
+        <button id="repeatBtn" class="control-btn" onclick="toggleRepeat()">🔁</button>
+        <button id="playBtn" class="control-btn">▶</button>
+        <button class="control-btn" onclick="nextSong()">⏭</button>
+      </div>
+
+      <!-- Timeline -->
+      <div class="timeline-container">
+        <span id="currentTime">0:00</span>
+        <input type="range" id="timeline" value="0" step="1">
+        <span id="duration">0:00</span>
+      </div>
+
+      <!-- Audio -->
+      <audio id="audioPlayer" src="{{ url_for('static', filename='songs/' + song.file) }}"></audio>
+    </div>
+
+    <!-- Recommended -->
+    <h3>Recommended Songs</h3>
+    <div class="recommended-grid">
+      {% for s in related[:12] %}
+      <div class="song-card" onclick="window.location.href='/player/{{ s.id }}'">
+        <img src="{{ url_for('static', filename='images/' + s.image) }}" alt="{{ s.title }}">
+        <div class="song-info">
+          <h4>{{ s.title }}</h4>
+          <p>{{ s.artist }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- Player Script -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const audio = document.getElementById("audioPlayer");
+  const playBtn = document.getElementById('playBtn');
+  const timeline = document.getElementById('timeline');
+  const currentTimeEl = document.getElementById('currentTime');
+  const durationEl = document.getElementById('duration');
+  const songs = JSON.parse('{{ songs | tojson | safe }}');
+  let currentSongId = parseInt('{{ song.id }}');
+
+  let isRepeat = false;
+  let isPlaying = false;
+  const autoNextEnabled = true; // ✅ Always ON
+
+  // Play / Pause
+  playBtn.addEventListener('click', () => {
+    if (!isPlaying) audio.play();
+    else audio.pause();
+  });
+
+  audio.addEventListener('play', () => {
+    isPlaying = true;
+    playBtn.textContent = '⏸';
+  });
+
+  audio.addEventListener('pause', () => {
+    isPlaying = false;
+    playBtn.textContent = '▶';
+  });
+
+  // Repeat toggle
+  window.toggleRepeat = () => {
+    isRepeat = !isRepeat;
+    document.getElementById("repeatBtn").classList.toggle('active', isRepeat);
+  };
+
+  // Next / Prev
+  window.nextSong = () => {
+    let currentIndex = songs.findIndex(s => s.id === currentSongId);
+    let nextIndex = (currentIndex + 1) % songs.length;
+    localStorage.setItem('autoPlayNext', 'true');
+    window.location.href = `/player/${songs[nextIndex].id}`;
+  };
+
+  window.prevSong = () => {
+    let currentIndex = songs.findIndex(s => s.id === currentSongId);
+    let prevIndex = (currentIndex - 1 + songs.length) % songs.length;
+    localStorage.setItem('autoPlayNext', 'true');
+    window.location.href = `/player/${songs[prevIndex].id}`;
+  };
+
+  // Timeline
+  audio.addEventListener('loadedmetadata', () => {
+    timeline.max = Math.floor(audio.duration);
+    durationEl.textContent = formatTime(audio.duration);
+  });
+
+  audio.addEventListener('timeupdate', () => {
+    timeline.value = Math.floor(audio.currentTime);
+    currentTimeEl.textContent = formatTime(audio.currentTime);
+  });
+
+  timeline.addEventListener('input', () => {
+    audio.currentTime = timeline.value;
+  });
+
+  // Auto-next (Always ON)
+  audio.addEventListener('ended', () => {
+    if (isRepeat) {
+      audio.currentTime = 0;
+      audio.play();
+    } else if (autoNextEnabled) {
+      nextSong();
+    }
+  });
+
+  // Format time helper
+  function formatTime(sec) {
+    const minutes = Math.floor(sec / 60);
+    const seconds = Math.floor(sec % 60).toString().padStart(2, '0');
+    return `${minutes}:${seconds}`;
+  }
+
+  // ✅ Autoplay when coming from previous song
+  if (localStorage.getItem('autoPlayNext') === 'true') {
+    setTimeout(() => {
+      audio.play();
+      localStorage.removeItem('autoPlayNext');
+    }, 500);
+  }
+});
+</script>
+
+</body>
+</html>

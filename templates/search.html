@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search Results - {{ query }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="main">
+    <h1>Search Results for "{{ query }}"</h1>
+
+    <form class="search-container" action="/search" method="get">
+      <input type="text" name="query" placeholder="Search again..." required>
+      <button type="submit">🔍</button>
+    </form>
+
+    {% if results %}
+      <div class="song-list">
+        {% for song in results %}
+        <div class="song-card" onclick="window.location.href='/player/{{ song.id }}'">
+          <img src="{{ url_for('static', filename='images/' + song.image) }}" alt="{{ song.title }}">
+          <h3>{{ song.title }}</h3>
+          <p>{{ song.artist }}</p>
+        </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>No songs found for "{{ query }}" 😢</p>
+    {% endif %}
+  </div>
+</body>
+</html>

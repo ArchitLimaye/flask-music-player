@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login | Music Player</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    body {
+      background: #111;
+      color: white;
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .auth-container {
+      width: 360px;
+      background: #1e1e1e;
+      border-radius: 20px;
+      text-align: center;
+      padding: 35px;
+      box-shadow: 0 0 25px rgba(0, 191, 255, 0.15);
+      transition: 0.3s;
+    }
+
+    .auth-container:hover {
+      box-shadow: 0 0 35px rgba(0, 191, 255, 0.25);
+      transform: translateY(-2px);
+    }
+
+    h2 {
+      color: #00bfff;
+      margin-bottom: 25px;
+      font-size: 1.8rem;
+      letter-spacing: 1px;
+    }
+
+    input {
+      width: 80%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 10px;
+      border: none;
+      background: #222;
+      color: white;
+      font-size: 0.95rem;
+    }
+
+    input:focus {
+      outline: none;
+      border: 2px solid #00bfff;
+    }
+
+    button {
+      background: #00bfff;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #0099ff;
+      transform: scale(1.05);
+    }
+
+    a {
+      color: #00bfff;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .flash-messages {
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .flash-success {
+      color: #00ff99;
+    }
+
+    .flash-error {
+      color: #ff5555;
+    }
+
+    .flash-info {
+      color: #cccccc;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <h2>Welcome Back 🎵</h2>
+
+    <!-- Flash messages -->
+    <div class="flash-messages">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <p class="flash-{{ category }}">{{ message }}</p>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+    </div>
+
+    <form method="POST">
+      <input type="text" name="username" placeholder="Username" required><br>
+      <input type="password" name="password" placeholder="Password" required><br>
+      <button type="submit">Login</button>
+    </form>
+
+    <p>Don’t have an account? <a href="{{ url_for('register') }}">Register here</a></p>
+  </div>
+</body>
+</html>
