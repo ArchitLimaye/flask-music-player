@@ -30,7 +30,15 @@ SONGS = [
     {"id": 14, "title": "Taki Taki", "artist": "Dj Snake", "file": "takitaki.mp3", "image": "takitaki.png", "genre": "EDM"},
     {"id": 15, "title": "Let me Love You", "artist": "Justin Bieber", "file": "letmeloveyou.mp3", "image": "letmeloveyou.jpg", "genre": "Pop"},
     {"id": 16, "title": "Perfect", "artist": "Ed Sheeran", "file": "perfect.mp3", "image": "perfect.jpg", "genre": "Acoustic"},
-    {"id": 17, "title": "Moral of the Story", "artist": "Ashe", "file": "moralofthestory.mp3", "image": "moralofthestory.jpg", "genre": "Acoustic"}
+    {"id": 17, "title": "Moral of the Story", "artist": "Ashe", "file": "moralofthestory.mp3", "image": "moralofthestory.jpg", "genre": "Acoustic"},
+    {"id": 18, "title": "Runaway", "artist": "Aurora", "file": "runaway.mp3", "image": "runaway.png", "genre": "lofi"},
+    {"id": 19, "title": "Snowman", "artist": "Sia", "file": "snowman.mp3", "image": "snowman.jpeg", "genre": "lofi"},
+    {"id": 20, "title": "Cheap Thrills", "artist": "Sia", "file": "cheapthrills.mp3", "image": "cheapthrills.png", "genre": "Pop"},
+    {"id": 21, "title": "Happy", "artist": "Pharrell Williams", "file": "happy.mp3", "image": "happy.jpg", "genre": "Pop"},
+    {"id": 22, "title": "Believer", "artist": "Imagine Dragons", "file": "beliver.mp3", "image": "believer.jpg", "genre": "Rock"},
+    {"id": 23, "title": "Night Changes", "artist": "One Direction", "file": "nibhtchanges.mp3", "image": "nightchanges.png", "genre": "Acoustic"},
+    {"id": 24, "title": "Closer", "artist": "Chainsmokers", "file": "closer.mp3", "image": "closer.png", "genre": "EDM"},
+
 ]
 
 # --- ROUTES --- #
