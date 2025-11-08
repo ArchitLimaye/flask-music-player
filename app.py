@@ -6,7 +6,7 @@ import random
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
 
-# --- Helper Function --- #
+# --- DB Connection Helper --- #
 def get_db_connection():
     conn = sqlite3.connect('users.db')
     conn.row_factory = sqlite3.Row
@@ -34,6 +34,7 @@ SONGS = [
 ]
 
 # --- ROUTES --- #
+
 @app.route('/')
 def index():
     if 'user' not in session:
@@ -48,6 +49,7 @@ def search():
     results = [s for s in SONGS if query in s['title'].lower() or query in s['artist'].lower() or query in s['genre'].lower()]
     return render_template('search.html', results=results, query=query, user=session['user'])
 
+# === PLAYER PAGE === #
 @app.route('/player/<int:song_id>')
 def player(song_id):
     if 'user' not in session:
@@ -69,11 +71,21 @@ def player(song_id):
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM playlists WHERE user = ?", (session['user'],))
     user_playlists = cursor.fetchall()
+    cursor.execute("SELECT playlist_id FROM playlist_songs WHERE song_id = ?", (song_id,))
+    existing_playlists = [row['playlist_id'] for row in cursor.fetchall()]
     conn.close()
 
-    return render_template("player.html", song=song, related=related, songs=SONGS, user=session['user'], user_playlists=user_playlists)
+    return render_template(
+        "player.html",
+        song=song,
+        related=related,
+        songs=SONGS,
+        user=session['user'],
+        user_playlists=user_playlists,
+        existing_playlists=existing_playlists
+    )
 
-# --- PLAYLIST SYSTEM --- #
+# === PLAYLIST SYSTEM === #
 @app.route('/playlists')
 def playlists():
     if 'user' not in session:
@@ -107,58 +119,67 @@ def view_playlist(playlist_id):
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM playlists WHERE id = ? AND user = ?", (playlist_id, session['user']))
     playlist = cursor.fetchone()
-
     if not playlist:
-        flash("⚠️ Playlist not found!", "error")
         conn.close()
+        flash("⚠️ Playlist not found!", "error")
         return redirect(url_for('playlists'))
 
     cursor.execute("SELECT song_id FROM playlist_songs WHERE playlist_id = ?", (playlist_id,))
     song_ids = [row['song_id'] for row in cursor.fetchall()]
     songs = [s for s in SONGS if s['id'] in song_ids]
-
     conn.close()
     return render_template('view_playlist.html', playlist=playlist, songs=songs, user=session['user'])
 
-# ✅ AJAX Add to Playlist (No reload)
+# === AJAX ADD TO PLAYLIST === #
 @app.route('/add_to_playlist/<int:song_id>', methods=['POST'])
 def add_to_playlist(song_id):
     if 'user' not in session:
-        return jsonify({"status": "unauthorized"}), 401
+        return jsonify({"status": "unauthorized", "message": "Please log in first."}), 401
 
-    playlist_id = request.form['playlist_id']
+    playlist_id = request.form.get('playlist_id')
+    if not playlist_id:
+        return jsonify({"status": "error", "message": "Missing playlist ID"}), 400
+
+    try:
+        playlist_id = int(playlist_id)
+    except ValueError:
+        return jsonify({"status": "error", "message": "Invalid playlist ID"}), 400
+
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM playlist_songs WHERE playlist_id = ? AND song_id = ?", (playlist_id, song_id))
-    exists = cursor.fetchone()
+    cursor.execute("SELECT * FROM playlists WHERE id = ? AND user = ?", (playlist_id, session['user']))
+    playlist = cursor.fetchone()
+    if not playlist:
+        conn.close()
+        return jsonify({"status": "error", "message": "Invalid playlist or access denied"}), 403
 
-    if not exists:
-        cursor.execute("INSERT INTO playlist_songs (playlist_id, song_id) VALUES (?, ?)", (playlist_id, song_id))
-        conn.commit()
+    cursor.execute("SELECT * FROM playlist_songs WHERE playlist_id = ? AND song_id = ?", (playlist_id, song_id))
+    if cursor.fetchone():
         conn.close()
-        return jsonify({"status": "success", "message": "Song added!"}), 200
-    else:
-        conn.close()
-        return jsonify({"status": "exists", "message": "Already in this playlist!"}), 200
-@app.route('/song_playlists/<int:song_id>')
-def song_playlists(song_id):
-    """Return JSON list of playlist IDs where this song already exists."""
+        return jsonify({"status": "exists", "message": "Already in playlist"}), 200
+
+    cursor.execute("INSERT INTO playlist_songs (playlist_id, song_id) VALUES (?, ?)", (playlist_id, song_id))
+    conn.commit()
+    conn.close()
+    return jsonify({"status": "success", "message": "🎵 Song added successfully!"}), 200
+
+# === Check Playlists Containing Song === #
+@app.route('/api/song_in_playlists/<int:song_id>')
+def song_in_playlists(song_id):
     if 'user' not in session:
         return jsonify([])
-
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("""
         SELECT playlist_id FROM playlist_songs
-        WHERE song_id = ? AND playlist_id IN (
-            SELECT id FROM playlists WHERE user = ?
-        )
+        WHERE song_id = ? AND playlist_id IN
+        (SELECT id FROM playlists WHERE user = ?)
     """, (song_id, session['user']))
-    data = [row['playlist_id'] for row in cursor.fetchall()]
+    playlists = [row['playlist_id'] for row in cursor.fetchall()]
     conn.close()
-    return jsonify(data)
+    return jsonify(playlists)
 
-# --- AUTHENTICATION --- #
+# === AUTHENTICATION === #
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     session.pop('_flashes', None)
@@ -169,18 +190,15 @@ def register():
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
-        existing_user = cursor.fetchone()
-
-        if existing_user:
-            flash("⚠️ Username already exists!", "error")
+        if cursor.fetchone():
             conn.close()
+            flash("⚠️ Username already exists!", "error")
             return redirect(url_for('register'))
 
         hashed_pw = generate_password_hash(password)
         cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_pw))
         conn.commit()
         conn.close()
-
         flash("✅ Registration successful! Please log in.", "success")
         return redirect(url_for('login'))
 
@@ -192,20 +210,17 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
         user = cursor.fetchone()
         conn.close()
-
         if user and check_password_hash(user['password'], password):
             session['user'] = username
             flash("✅ Login successful!", "success")
             return redirect(url_for('index'))
         else:
             flash("❌ Invalid username or password!", "error")
-
     return render_template('login.html')
 
 @app.route('/logout')
@@ -214,6 +229,5 @@ def logout():
     flash("👋 You have been logged out.", "info")
     return redirect(url_for('login'))
 
-# --- Run App --- #
 if __name__ == '__main__':
     app.run(debug=True)

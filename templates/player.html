@@ -6,26 +6,25 @@
   <title>{{ song.title }} - Player</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/player.css') }}">
   <style>
-    /* === Playlist Dropdown Positioned to Right === */
+    /* === Floating Playlist Dropdown on Right === */
     .playlist-wrapper {
-  position: fixed;
-  top: 55%;
-  right: 22%;  /* 👈 Brings the box closer to the player */
-  transform: translateY(-50%);
-  background: rgba(25, 25, 25, 0.95);
-  border-radius: 15px;
-  border: 1px solid #00bfff33;
-  padding: 15px;
-  width: 250px;
-  max-height: 300px;
-  overflow-y: auto;
-  box-shadow: 0 0 25px rgba(0,191,255,0.25);
-  display: none;
-  z-index: 100;
-  animation: slideInRight 0.3s ease-out;
-  backdrop-filter: blur(8px);
-}
-
+      position: fixed;
+      top: 55%;
+      right: 20%;
+      transform: translateY(-50%);
+      background: rgba(25, 25, 25, 0.95);
+      border-radius: 15px;
+      border: 1px solid #00bfff33;
+      padding: 15px;
+      width: 250px;
+      max-height: 300px;
+      overflow-y: auto;
+      box-shadow: 0 0 25px rgba(0,191,255,0.25);
+      display: none;
+      z-index: 100;
+      animation: slideInRight 0.3s ease-out;
+      backdrop-filter: blur(8px);
+    }
 
     @keyframes slideInRight {
       from { opacity: 0; transform: translate(20px, -50%); }
@@ -48,6 +47,10 @@
     .playlist-wrapper button:hover {
       background: rgba(0,191,255,0.25);
       transform: scale(1.03);
+    }
+
+    .playlist-wrapper .added {
+      color: #00ff88;
     }
 
     .playlist-wrapper p {
@@ -106,8 +109,8 @@
   <div class="sidebar">
     <div class="features">
       <div class="feature" onclick="window.location.href='/playlists'">🎧 Playlists</div>
-      <div class="feature">⭐ Feature 2</div>
-      <div class="feature">📂 Feature 3</div>
+      <div class="feature">⭐ Favorites</div>
+      <div class="feature">📂 Library</div>
     </div>
   </div>
 
@@ -176,14 +179,15 @@
     </div>
   </div>
 
-  <!-- Floating Playlist Dropdown (Right Side) -->
+  <!-- Floating Playlist Dropdown -->
   <div id="playlistDropdown" class="playlist-wrapper">
     {% if user_playlists %}
       {% for p in user_playlists %}
-      <form method="POST" action="/add_to_playlist/{{ song.id }}">
-        <input type="hidden" name="playlist_id" value="{{ p['id'] }}">
-        <button type="submit" class="playlist-option">{{ p['name'] }}</button>
-      </form>
+        <button type="button"
+                class="playlist-option {% if p['id'] in existing_playlists %}added{% endif %}"
+                data-playlist-id="{{ p['id'] }}">
+          {{ p['name'] }}{% if p['id'] in existing_playlists %} ✅{% endif %}
+        </button>
       {% endfor %}
     {% else %}
       <p>No playlists yet! 🎧</p>
@@ -191,151 +195,129 @@
   </div>
 
   <!-- JS -->
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const audio = document.getElementById("audioPlayer");
-  const playBtn = document.getElementById('playBtn');
-  const timeline = document.getElementById('timeline');
-  const currentTimeEl = document.getElementById('currentTime');
-  const durationEl = document.getElementById('duration');
-  const songs = JSON.parse('{{ songs | tojson | safe }}');
-  const songId = JSON.parse('{{ song.id | tojson | safe }}');
-  let currentSongId = songId;
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const audio = document.getElementById("audioPlayer");
+    const playBtn = document.getElementById('playBtn');
+    const timeline = document.getElementById('timeline');
+    const currentTimeEl = document.getElementById('currentTime');
+    const durationEl = document.getElementById('duration');
+    const songs = JSON.parse('{{ songs | tojson | safe }}');
+    const songId = JSON.parse('{{ song.id | tojson | safe }}');
+    let currentSongId = songId;
 
-  let isRepeat = false;
-  let isPlaying = false;
-  const autoNextEnabled = true;
+    let isRepeat = false;
+    let isPlaying = false;
+    const autoNextEnabled = true;
 
-  // === ▶ Play / Pause ===
-  playBtn.addEventListener('click', () => (!isPlaying ? audio.play() : audio.pause()));
-  audio.addEventListener('play', () => { isPlaying = true; playBtn.textContent = '⏸'; });
-  audio.addEventListener('pause', () => { isPlaying = false; playBtn.textContent = '▶'; });
+    // === Basic Player Controls ===
+    playBtn.addEventListener('click', () => (!isPlaying ? audio.play() : audio.pause()));
+    audio.addEventListener('play', () => { isPlaying = true; playBtn.textContent = '⏸'; });
+    audio.addEventListener('pause', () => { isPlaying = false; playBtn.textContent = '▶'; });
 
-  // === 🔁 Repeat ===
-  window.toggleRepeat = () => {
-    isRepeat = !isRepeat;
-    document.getElementById("repeatBtn").classList.toggle('active', isRepeat);
-  };
+    window.toggleRepeat = () => {
+      isRepeat = !isRepeat;
+      document.getElementById("repeatBtn").classList.toggle('active', isRepeat);
+    };
 
-  // === ⏮ / ⏭ ===
-  window.nextSong = () => {
-    const i = songs.findIndex(s => s.id === currentSongId);
-    const next = (i + 1) % songs.length;
-    localStorage.setItem('autoPlayNext', 'true');
-    window.location.href = `/player/${songs[next].id}`;
-  };
+    window.nextSong = () => {
+      const i = songs.findIndex(s => s.id === currentSongId);
+      const next = (i + 1) % songs.length;
+      localStorage.setItem('autoPlayNext', 'true');
+      window.location.href = `/player/${songs[next].id}`;
+    };
 
-  window.prevSong = () => {
-    const i = songs.findIndex(s => s.id === currentSongId);
-    const prev = (i - 1 + songs.length) % songs.length;
-    localStorage.setItem('autoPlayNext', 'true');
-    window.location.href = `/player/${songs[prev].id}`;
-  };
+    window.prevSong = () => {
+      const i = songs.findIndex(s => s.id === currentSongId);
+      const prev = (i - 1 + songs.length) % songs.length;
+      localStorage.setItem('autoPlayNext', 'true');
+      window.location.href = `/player/${songs[prev].id}`;
+    };
 
-  // === Timeline ===
-  audio.addEventListener('loadedmetadata', () => {
-    timeline.max = Math.floor(audio.duration);
-    durationEl.textContent = formatTime(audio.duration);
-  });
+    audio.addEventListener('loadedmetadata', () => {
+      timeline.max = Math.floor(audio.duration);
+      durationEl.textContent = formatTime(audio.duration);
+    });
 
-  audio.addEventListener('timeupdate', () => {
-    timeline.value = Math.floor(audio.currentTime);
-    currentTimeEl.textContent = formatTime(audio.currentTime);
-  });
+    audio.addEventListener('timeupdate', () => {
+      timeline.value = Math.floor(audio.currentTime);
+      currentTimeEl.textContent = formatTime(audio.currentTime);
+    });
 
-  timeline.addEventListener('input', () => { audio.currentTime = timeline.value; });
+    timeline.addEventListener('input', () => { audio.currentTime = timeline.value; });
 
-  // === Auto Next ===
-  audio.addEventListener('ended', () => {
-    if (isRepeat) { audio.currentTime = 0; audio.play(); }
-    else if (autoNextEnabled) nextSong();
-  });
+    audio.addEventListener('ended', () => {
+      if (isRepeat) { audio.currentTime = 0; audio.play(); }
+      else if (autoNextEnabled) nextSong();
+    });
 
-  // === Format Time ===
-  function formatTime(sec) {
-    const m = Math.floor(sec / 60);
-    const s = Math.floor(sec % 60).toString().padStart(2, '0');
-    return `${m}:${s}`;
-  }
+    function formatTime(sec) {
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60).toString().padStart(2, '0');
+      return `${m}:${s}`;
+    }
 
-  if (localStorage.getItem('autoPlayNext') === 'true') {
-    setTimeout(() => { audio.play(); localStorage.removeItem('autoPlayNext'); }, 400);
-  }
+    if (localStorage.getItem('autoPlayNext') === 'true') {
+      setTimeout(() => { audio.play(); localStorage.removeItem('autoPlayNext'); }, 400);
+    }
 
-  // === 🎧 Playlist Dropdown ===
-  const btn = document.getElementById("playlistBtn");
-  const dropdown = document.getElementById("playlistDropdown");
-  const successBox = document.getElementById("playlistSuccess");
+    // === Playlist Dropdown Logic ===
+    const btn = document.getElementById("playlistBtn");
+    const dropdown = document.getElementById("playlistDropdown");
+    const successBox = document.getElementById("playlistSuccess");
 
-  btn.addEventListener("click", async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+    });
 
-    const isVisible = dropdown.style.display === "block";
-    dropdown.style.display = isVisible ? "none" : "block";
+    document.addEventListener("click", (e) => {
+      if (!btn.contains(e.target) && !dropdown.contains(e.target))
+        dropdown.style.display = "none";
+    });
 
-    if (!isVisible) {
-      // 🧠 Fetch which playlists already contain this song
-      try {
-        const res = await fetch(`/song_playlists/${songId}`);
-        const songPlaylists = await res.json();
+    // === Add to Playlist via AJAX ===
+    document.querySelectorAll(".playlist-option").forEach(option => {
+      option.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const playlistId = option.dataset.playlistId;
 
-        document.querySelectorAll(".playlist-option").forEach(option => {
-          const id = parseInt(option.dataset.playlistId);
-          const mark = option.querySelector(".checkmark");
-          if (songPlaylists.includes(id)) {
-            mark.style.display = "inline";
-            option.disabled = true;
+        try {
+          const res = await fetch(`/add_to_playlist/${songId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams({ playlist_id: playlistId })
+          });
+
+          const result = await res.json();
+
+          if (result.status === "success") {
+            option.textContent = option.textContent.replace("✅", "") + " ✅";
+            option.classList.add("added");
+            showSuccess(result.message);
+            dropdown.style.display = "none";
+          } else if (result.status === "exists") {
+            showSuccess("⚠️ Already in playlist!");
           } else {
-            mark.style.display = "none";
-            option.disabled = false;
+            alert(result.message || "❌ Error adding to playlist");
           }
-        });
-      } catch (err) {
-        console.error("Failed to fetch playlist info:", err);
-      }
+        } catch (err) {
+          console.error("Error adding song:", err);
+          alert("❌ Something went wrong!");
+        }
+      });
+    });
+
+    function showSuccess(msg) {
+      successBox.textContent = msg;
+      successBox.style.display = "flex";
+      successBox.style.animation = "none";
+      void successBox.offsetWidth;
+      successBox.style.animation = "successFade 1.5s ease-in-out forwards";
+      setTimeout(() => successBox.style.display = "none", 1500);
     }
   });
-
-  // === Close dropdown when clicking outside ===
-  document.addEventListener("click", (e) => {
-    if (!btn.contains(e.target) && !dropdown.contains(e.target)) dropdown.style.display = "none";
-  });
-
-  // === 🎶 Add Song to Playlist (AJAX) ===
-  document.querySelectorAll(".playlist-option").forEach(option => {
-    option.addEventListener("click", async (e) => {
-      e.preventDefault();
-      const playlistId = option.dataset.playlistId;
-
-      try {
-        const res = await fetch(`/add_to_playlist/${songId}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: new URLSearchParams({ playlist_id: playlistId })
-        });
-
-        const result = await res.json();
-        if (result.status === "success" || result.status === "exists") {
-          // ✅ Show success checkmark instantly
-          option.querySelector(".checkmark").style.display = "inline";
-          option.disabled = true;
-
-          // 🎉 Flash success animation
-          successBox.style.display = "flex";
-          successBox.style.animation = "none";
-          void successBox.offsetWidth;
-          successBox.style.animation = "successFade 1.5s ease-in-out forwards";
-          setTimeout(() => successBox.style.display = "none", 1500);
-        }
-      } catch (err) {
-        console.error("Add to playlist failed:", err);
-        alert("❌ Something went wrong!");
-      }
-    });
-  });
-});
-</script>
-
+  </script>
 </body>
 </html>
