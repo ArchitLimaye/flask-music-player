@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Browse by Genre{% endblock %}
+{% block content %}
+<h1>🎧 Browse by Genre</h1>
+
+{% for genre, songs in grouped.items() %}
+  <div style="margin:30px 0;">
+    <h2 style="color:#00bfff;">{{ genre }}</h2>
+    <div style="display:flex;flex-wrap:wrap;gap:15px;justify-content:center;">
+      {% for s in songs %}
+      <div class="song-card" onclick="window.location.href='/player/{{ s.id }}'" style="width:180px;background:#1e1e1e;border-radius:15px;padding:10px;cursor:pointer;transition:transform .2s;">
+        <img src="{{ url_for('static', filename='images/' + s.image) }}" alt="{{ s.title }}" style="width:100%;border-radius:10px;">
+        <h3>{{ s.title }}</h3>
+        <p>{{ s.artist }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endfor %}
+{% endblock %}

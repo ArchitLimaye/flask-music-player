@@ -258,3 +258,423 @@ body {
   opacity: 0.6;
   cursor: not-allowed;
 }
+/* === Song Grid Layout === */
+.song-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+  padding: 20px 40px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.song-card {
+  background-color: #1e1e1e;
+  border-radius: 12px;
+  text-align: center;
+  padding: 10px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.song-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.song-card:hover {
+  transform: scale(1.05);
+  background-color: #292929;
+}
+
+/* Prevent overflow clipping */
+.main {
+  margin-left: 80px; /* enough space for sidebar */
+  padding: 30px;
+  overflow-y: auto;
+}
+
+body {
+  overflow-x: hidden;
+}
+/* Song Grid for Genre/Artist Pages */
+.song-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 25px;
+  padding: 20px 40px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.song-card {
+  background-color: #1e1e1e;
+  border-radius: 15px;
+  padding: 10px;
+  text-align: center;
+  transition: 0.3s ease;
+  cursor: pointer;
+}
+
+.song-card img {
+  width: 100%;
+  height: 180px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.song-card:hover {
+  transform: scale(1.05);
+  background-color: #2a2a2a;
+}
+
+.title {
+  color: white;
+  text-align: center;
+  margin-top: 60px;
+}
+
+.subtitle {
+  color: #a855f7;
+  text-align: center;
+  margin-bottom: 20px;
+}
+/* Song Grid for Genre/Artist Pages */
+.song-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 25px;
+  padding: 20px 40px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.song-card {
+  background-color: #1e1e1e;
+  border-radius: 15px;
+  padding: 10px;
+  text-align: center;
+  transition: 0.3s ease;
+  cursor: pointer;
+}
+
+.song-card img {
+  width: 100%;
+  height: 180px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.song-card:hover {
+  transform: scale(1.05);
+  background-color: #2a2a2a;
+}
+
+.title {
+  color: white;
+  text-align: center;
+  margin-top: 60px;
+}
+
+.subtitle {
+  color: #a855f7;
+  text-align: center;
+  margin-bottom: 20px;
+}
+/* ===== LYRA ASSISTANT ===== */
+
+/* Floating bubble button */
+#lyra-container {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  background: linear-gradient(135deg, #6a0dad, #8a2be2);
+  color: white;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  cursor: pointer;
+  z-index: 9999;
+  box-shadow: 0 0 15px rgba(0,0,0,0.4);
+  transition: transform 0.2s ease, background 0.3s ease;
+}
+
+#lyra-container:hover {
+  transform: scale(1.1);
+  background: linear-gradient(135deg, #8a2be2, #b066ff);
+}
+
+/* Chatbox (hidden by default) */
+#lyra-chatbox {
+  position: fixed;
+  bottom: 100px;
+  right: 25px;
+  width: 320px;
+  background: #1f1f1f;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+  display: none;               /* ✅ Hidden on load */
+  flex-direction: column;
+  z-index: 9999;
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+  transition: all 0.3s ease;
+}
+
+/* Visible when activated */
+#lyra-chatbox.active {
+  display: flex;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Header bar */
+.lyra-header {
+  background: #6a0dad;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  padding: 10px;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+/* Chat messages area */
+.lyra-messages {
+  padding: 10px;
+  height: 250px;
+  overflow-y: auto;
+  color: white;
+}
+
+/* Input area */
+.lyra-input {
+  display: flex;
+  border-top: 1px solid #333;
+}
+
+.lyra-input input {
+  flex: 1;
+  background: #222;
+  color: white;
+  border: none;
+  padding: 10px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.lyra-input button {
+  background: #6a0dad;
+  border: none;
+  color: white;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.lyra-input button:hover {
+  background: #8a2be2;
+}
+
+/* Typing indicator dots */
+.lyra-typing {
+  display: flex;
+  gap: 5px;
+  margin: 5px 0;
+}
+
+.lyra-typing .dot {
+  width: 8px;
+  height: 8px;
+  background: #a855f7;
+  border-radius: 50%;
+  animation: blink 1.2s infinite;
+}
+
+@keyframes blink {
+  0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
+  40% { opacity: 1; transform: scale(1.1); }
+}
+
+/* Option bubbles */
+.lyra-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.lyra-option-bubble {
+  background: linear-gradient(135deg, #6a0dad, #8a2be2);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  padding: 10px;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.3s ease;
+}
+
+.lyra-option-bubble:hover {
+  transform: scale(1.05);
+  background: linear-gradient(135deg, #8a2be2, #b066ff);
+}
+/* 💬 Lyra Floating Icon */
+#lyra-container {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  background: linear-gradient(135deg, #6a0dad, #8a2be2);
+  color: white;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  cursor: pointer;
+  z-index: 9999;
+  transition: transform 0.2s ease;
+}
+
+#lyra-container:hover {
+  transform: scale(1.1);
+}
+
+/* 💬 Chatbox */
+#lyra-chatbox {
+  position: fixed;
+  bottom: 100px;
+  right: 25px;
+  width: 320px;
+  background: #1f1f1f;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  z-index: 9999;
+}
+
+/* Hide by default */
+.lyra-hidden {
+  display: none;
+}
+
+.lyra-header {
+  background: #6a0dad;
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.lyra-messages {
+  padding: 10px;
+  height: 250px;
+  overflow-y: auto;
+  color: white;
+}
+
+.lyra-input {
+  display: flex;
+  border-top: 1px solid #333;
+}
+
+.lyra-input input {
+  flex: 1;
+  background: #222;
+  color: white;
+  border: none;
+  padding: 10px;
+}
+
+.lyra-input button {
+  background: #6a0dad;
+  border: none;
+  color: white;
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+/* Option bubbles */
+.lyra-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.lyra-option-bubble {
+  background: linear-gradient(135deg, #6a0dad, #8a2be2);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  padding: 10px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.lyra-option-bubble:hover {
+  transform: scale(1.05);
+}
+/* ===== PLAYLIST GRID ===== */
+.playlist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 25px;
+  padding: 30px 60px;
+  justify-content: center;
+}
+
+.playlist-card {
+  background: linear-gradient(145deg, #1c1c1c, #2a2a2a);
+  border-radius: 20px;
+  text-align: center;
+  padding: 30px 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+}
+
+.playlist-card:hover {
+  transform: scale(1.06);
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+  background: linear-gradient(145deg, #292929, #3a3a3a);
+}
+
+.playlist-icon {
+  font-size: 2.8rem;
+  margin-bottom: 10px;
+  color: #a855f7;
+}
+
+.playlist-card h3 {
+  color: white;
+  font-size: 1.3rem;
+  margin: 10px 0;
+}
+
+.playlist-card p {
+  color: #bbb;
+  font-size: 0.9rem;
+}
+
+/* ===== PAGE TITLES ===== */
+.title {
+  color: white;
+  text-align: center;
+  margin-top: 50px;
+}
+
+.subtitle {
+  color: #a855f7;
+  text-align: center;
+  margin-bottom: 30px;
+}

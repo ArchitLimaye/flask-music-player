@@ -1,0 +1,109 @@
+#lyra-container {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  background: linear-gradient(135deg, #6a0dad, #8a2be2);
+  color: white;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  cursor: pointer;
+  z-index: 9999;
+}
+
+#lyra-chatbox {
+  position: fixed;
+  bottom: 100px;
+  right: 25px;
+  width: 320px;
+  background: #1f1f1f;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  z-index: 9999;
+}
+
+.lyra-hidden {
+  display: none;
+}
+
+.lyra-header {
+  background: #6a0dad;
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.lyra-messages {
+  padding: 10px;
+  height: 250px;
+  overflow-y: auto;
+  color: white;
+}
+
+.lyra-input {
+  display: flex;
+  border-top: 1px solid #333;
+}
+
+.lyra-input input {
+  flex: 1;
+  background: #222;
+  color: white;
+  border: none;
+  padding: 10px;
+}
+
+.lyra-input button {
+  background: #6a0dad;
+  border: none;
+  color: white;
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+/* Typing dots */
+.lyra-typing {
+  display: flex;
+  gap: 5px;
+  margin: 5px 0;
+}
+.lyra-typing .dot {
+  width: 8px;
+  height: 8px;
+  background: #a855f7;
+  border-radius: 50%;
+  animation: blink 1.2s infinite;
+}
+@keyframes blink {
+  0%, 80%, 100% { opacity: 0.2; transform: scale(0.8);}
+  40% { opacity: 1; transform: scale(1.1);}
+}
+
+/* Option bubbles */
+.lyra-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.lyra-option-bubble {
+  background: linear-gradient(135deg, #6a0dad, #8a2be2);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  padding: 10px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.lyra-option-bubble:hover {
+  transform: scale(1.05);
+}

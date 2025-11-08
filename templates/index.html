@@ -13,7 +13,8 @@
     <div class="features">
       <div class="feature" onclick="window.location.href='/playlists'">🎧 Playlists</div>
       <div class="feature" onclick="window.location.href='/emotion'">😄 Facial Emotion</div>
-      <div class="feature">📂 Feature 3</div>
+      <div class="feature" onclick="window.location.href='/genremusic'">🎵 Genre Playlists</div>
+      <div class="feature" onclick="window.location.href='/artistmusic'">🎤 Artist Playlists</div>
     </div>
   </div>
 
@@ -61,6 +62,21 @@
       {% endfor %}
     </div>
   </div>
+
+
+  <!-- 💬 Lyra Assistant -->
+  <div id="lyra-container" class="lyra-bubble">💬</div>
+
+  <div id="lyra-chatbox" class="lyra-hidden">
+    <div class="lyra-header">🌙 Lyra — Your Music Assistant</div>
+    <div class="lyra-messages" id="lyra-messages"></div>
+    <div class="lyra-input">
+      <input type="text" id="lyra-input-text" placeholder="Ask Lyra..." />
+      <button id="lyra-send">Send</button>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/lyra.js') }}"></script>
 
 </body>
 </html>

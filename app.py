@@ -312,5 +312,75 @@ def logout():
     return redirect(url_for('login'))
 
 
+# =====================================================================
+#                    ADDITIONS (NON-DESTRUCTIVE)
+# =====================================================================
+
+# --- Genre playlists page ---
+@app.route("/genremusic")
+def show_genre_music():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+
+    genre_groups = {}
+    for s in SONGS:
+        genre_groups.setdefault(s["genre"], []).append(s)
+
+    return render_template("genremusic.html", genre_groups=genre_groups, user=session["user"])
+
+# --- Artist playlists page ---
+@app.route("/artistmusic")
+def show_artist_music():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+
+    artist_groups = {}
+    for s in SONGS:
+        artist_groups.setdefault(s["artist"], []).append(s)
+
+    return render_template("artistmusic.html", artist_groups=artist_groups, user=session["user"])
+
+# --- View songs by a single genre ---
+@app.route("/genre/<genre>")
+def view_genre_songs(genre):
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    genre_songs = [s for s in SONGS if s["genre"].lower() == genre.lower()]
+    return render_template("view_playlist.html", songs=genre_songs, title=f"{genre} Songs", user=session["user"])
+
+# --- View songs by a single artist ---
+@app.route("/artist/<artist>")
+def view_artist_songs(artist):
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    artist_songs = [s for s in SONGS if s["artist"].lower() == artist.lower()]
+    return render_template("view_playlist.html", songs=artist_songs, title=f"{artist} Songs", user=session["user"])
+
+# --- Lyra assistant endpoint ---
+@app.route("/lyra", methods=["POST"])
+def lyra_reply():
+    user_msg = (request.json or {}).get("message", "").lower()
+
+    if any(k in user_msg for k in ["recommend", "menu", "options"]):
+        reply = {
+            "type": "options",
+            "message": "✨ Choose how you'd like me to recommend music:",
+            "buttons": [
+                {"label": "🎧 Genre Based", "link": "/genremusic"},
+                {"label": "🎤 Artist Based", "link": "/artistmusic"},
+                {"label": "😄 Facial Emotion", "link": "/emotion"}
+            ]
+        }
+    elif any(k in user_msg for k in ["hi", "hello", "hey"]):
+        reply = {"type": "text", "message": "Hey there! 👋 I’m Lyra — your music companion. Type 'recommend' to see options!"}
+    elif "weeknd" in user_msg:
+        reply = {"type": "text", "message": "🔥 The Weeknd always delivers! Try 'Starboy' or 'Blinding Lights'."}
+    else:
+        reply = {"type": "text", "message": "I'm Lyra 🎶 — try typing 'recommend' to see my recommendation modes!"}
+
+    return jsonify(reply)
+
+# =====================================================================
+
 if __name__ == '__main__':
     app.run(debug=True)

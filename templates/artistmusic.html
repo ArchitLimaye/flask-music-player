@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Artist-Based Playlists</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="main">
+    <h1 class="title">🎤 Artist-Based Music</h1>
+    <p class="subtitle">Explore songs grouped by your favorite artists</p>
+
+    <div class="playlist-grid">
+      {% for artist, songs in artist_groups.items() %}
+      <div class="playlist-card" onclick="window.location.href='/artist/{{ artist }}'">
+        <div class="playlist-icon">🎤</div>
+        <h3>{{ artist }}</h3>
+        <p>{{ songs|length }} Songs</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</body>
+</html>

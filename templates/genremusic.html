@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Genre-Based Playlists</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="main">
+    <h1 class="title">🎧 Genre-Based Music</h1>
+    <p class="subtitle">Explore songs grouped by your favorite genres</p>
+
+    <div class="playlist-grid">
+      {% for genre, songs in genre_groups.items() %}
+      <div class="playlist-card" onclick="window.location.href='/genre/{{ genre }}'">
+        <div class="playlist-icon">🎵</div>
+        <h3>{{ genre }}</h3>
+        <p>{{ songs|length }} Songs</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</body>
+</html>

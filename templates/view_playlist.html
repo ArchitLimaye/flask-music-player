@@ -2,88 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>{{ playlist['name'] }} | Music Player</title>
+  <title>{{ title }}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-  <style>
-    body {
-      background-color: #111;
-      color: white;
-      font-family: 'Poppins', sans-serif;
-      margin: 0;
-    }
-    .playlist-header {
-      text-align: center;
-      margin-top: 100px;
-      margin-bottom: 30px;
-    }
-    .playlist-header h2 {
-      color: #00bfff;
-      font-size: 2rem;
-      margin-bottom: 5px;
-    }
-    .playlist-header p {
-      color: #ccc;
-      font-size: 1rem;
-    }
-    .song-grid {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
-      margin-bottom: 50px;
-    }
-    .song-card {
-      width: 180px;
-      background: #1e1e1e;
-      border-radius: 15px;
-      padding: 10px;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 0 15px rgba(0,191,255,0.1);
-    }
-    .song-card:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 20px rgba(0,191,255,0.3);
-    }
-    .song-card img {
-      width: 100%;
-      border-radius: 10px;
-    }
-    .song-card h4 {
-      margin: 10px 0 5px;
-      color: #fff;
-      font-size: 1rem;
-    }
-    .song-card p {
-      margin: 0;
-      color: #aaa;
-      font-size: 0.9rem;
-    }
-  </style>
 </head>
 <body>
-  <header class="header-bar">
-    <a class="logo" href="{{ url_for('index') }}">🎵 MusicPlayer</a>
-    <span>{{ playlist['name'] }}</span>
-  </header>
-
   <div class="main">
-    <div class="playlist-header">
-      <h2>{{ playlist['name'] }}</h2>
-      <p>🎶 {{ songs|length }} songs in this playlist</p>
-    </div>
+    <h1 class="title">🎧 {{ title }}</h1>
+    <p class="subtitle">Enjoy your favorite songs curated just for you</p>
 
-    <div class="song-grid">
+    {% if songs %}
+    <div class="song-list">
       {% for song in songs %}
       <div class="song-card" onclick="window.location.href='/player/{{ song.id }}'">
         <img src="{{ url_for('static', filename='images/' + song.image) }}" alt="{{ song.title }}">
-        <h4>{{ song.title }}</h4>
+        <h3>{{ song.title }}</h3>
         <p>{{ song.artist }}</p>
       </div>
-      {% else %}
-      <p style="color:#aaa;">No songs yet — add some from the player page 🎧</p>
       {% endfor %}
     </div>
+    {% else %}
+    <p style="text-align:center; margin-top:40px;">No songs found in this category.</p>
+    {% endif %}
   </div>
 </body>
 </html>
