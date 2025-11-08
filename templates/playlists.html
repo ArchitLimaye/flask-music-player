@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Playlists | Music Player</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    body {
+      background-color: #111;
+      color: white;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+    }
+
+    header.header-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 65px;
+      background: rgba(17,17,17,0.95);
+      backdrop-filter: blur(10px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 40px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: #00bfff;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    .logo:hover {
+      color: white;
+    }
+
+    .profile-text {
+      color: white;
+      font-size: 1rem;
+    }
+
+    .main {
+      margin-top: 100px;
+      text-align: center;
+      padding-bottom: 40px;
+    }
+
+    .main h1 {
+      color: #00bfff;
+      font-size: 2rem;
+      margin-bottom: 25px;
+    }
+
+    /* Playlist grid layout */
+    .playlist-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 25px;
+      margin-bottom: 40px;
+    }
+
+    /* Playlist cards */
+    .playlist-card {
+      width: 180px;
+      height: 160px;
+      background: #1e1e1e;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(0,191,255,0.1);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      cursor: pointer;
+    }
+
+    .playlist-card:hover {
+      transform: scale(1.06);
+      box-shadow: 0 0 25px rgba(0,191,255,0.3);
+    }
+
+    .playlist-card p {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: white;
+      text-transform: capitalize;
+    }
+
+    /* Create playlist form */
+    .create-playlist {
+      background: #1a1a1a;
+      border-radius: 15px;
+      padding: 20px;
+      display: inline-block;
+      box-shadow: 0 0 15px rgba(0,191,255,0.15);
+      transition: box-shadow 0.3s ease;
+    }
+
+    .create-playlist:hover {
+      box-shadow: 0 0 25px rgba(0,191,255,0.25);
+    }
+
+    .create-playlist input {
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      width: 220px;
+      background: #222;
+      color: white;
+      font-size: 1rem;
+      margin-right: 10px;
+    }
+
+    .create-playlist input:focus {
+      outline: 2px solid #00bfff;
+    }
+
+    .create-playlist button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #00bfff, #0099ff);
+      color: white;
+      font-weight: 500;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .create-playlist button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(0,191,255,0.3);
+    }
+
+    p.no-playlist {
+      color: #aaa;
+      font-size: 1rem;
+      margin-top: 30px;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header-bar">
+    <a class="logo" href="{{ url_for('index') }}">🎵 MusicPlayer</a>
+    <span class="profile-text">Hello, {{ user }} 👋</span>
+  </header>
+
+  <!-- Main content -->
+  <div class="main">
+    <h1>Your Playlists</h1>
+
+    <!-- Playlist Cards -->
+    <div class="playlist-grid">
+      {% for p in playlists %}
+<div class="playlist-card" onclick='window.location.href="{{ url_for("view_playlist", playlist_id=p.id) }}"'>
+          <p>{{ p.name }}</p>
+        </div>
+      {% else %}
+        <p class="no-playlist">No playlists yet. Create one below 👇</p>
+      {% endfor %}
+    </div>
+
+    <!-- Create Playlist -->
+    <div class="create-playlist">
+      <form method="POST" action="{{ url_for('create_playlist') }}">
+        <input type="text" name="name" placeholder="Enter playlist name" required>
+        <button type="submit">➕ Create</button>
+      </form>
+    </div>
+  </div>
+
+</body>
+</html>

@@ -241,3 +241,20 @@ body {
   color: #bbb;
   font-size: 0.9rem;
 }
+.playlist-option {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.playlist-option .checkmark {
+  font-size: 1rem;
+  color: #00ff88;
+  margin-left: 10px;
+}
+
+.playlist-option[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

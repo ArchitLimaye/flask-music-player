@@ -1,54 +1,52 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
-import random  # ✅ Added for shuffling recommendations
+import random
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
 
-# --- Helper Functions --- #
+# --- Helper Function --- #
 def get_db_connection():
     conn = sqlite3.connect('users.db')
     conn.row_factory = sqlite3.Row
     return conn
 
-
+# --- SONG DATA --- #
 SONGS = [
-    {"id": 1, "title": "Iris Out", "artist": "Kenshi Yonezu", "file": "irisOut.mp3", "image": "irisOut.webp"},
-    {"id": 2, "title": "Blinding Lights", "artist": "The Weeknd", "file": "blindingLights.mp3", "image": "blindingLights.png"},
-    {"id": 3, "title": "Let the world burn", "artist": "Chris Grey", "file": "lettheworldburn.mp3", "image": "lettheworldburn.jpg"},
-    {"id": 4, "title": "Saphire", "artist": "Ed Sheeran", "file": "saphire.mp3", "image": "saphire.png"},
-    {"id": 5, "title": "Specialz", "artist": "King Gnu", "file": "specialz.mp3", "image": "specialz.jpg"},
-    {"id": 6, "title": "Superpower", "artist": "Kiss of Life", "file": "superpower.mp3", "image": "superpower.webp"},
-    {"id": 7, "title": "Just Keep Watching", "artist": "Tate McRae", "file": "justkeepwatching.mp3", "image": "justkeepwatching.png"},
-    {"id": 8, "title": "StarBoy", "artist": "The Weeknd", "file": "starboy.mp3", "image": "starboy.jpg"},
-    {"id": 9, "title": "KuLoSa", "artist": "Oxlade", "file": "kulosa.mp3", "image": "kulosa.jpg"},
-    {"id": 10, "title": "Espresso", "artist": "Sabrina Carpenter", "file": "espresso.mp3", "image": "espresso.png"},
-    {"id": 11, "title": "Middle of the night", "artist": "Elley Duhe", "file": "middleofthenight.mp3", "image": "middleofthenight.png"},
-    {"id": 12, "title": "One Dance", "artist": "Drake", "file": "onedance.mp3", "image": "onedance.png"},
-    {"id": 13, "title": "Shape of you", "artist": "Ed Sheeran", "file": "shapeofyou.mp3", "image": "shapeofyou.png"},
-    {"id": 14, "title": "Taki Taki", "artist": "Dj Snake", "file": "takitaki.mp3", "image": "takitaki.png"},
-    {"id": 15, "title": "Let me Love You", "artist": "Justin Bieber", "file": "letmeloveyou.mp3", "image": "letmeloveyou.jpg"},
-    {"id": 16, "title": "Perfect", "artist": "Ed Sheeran", "file": "perfect.mp3", "image": "perfect.jpg"}
+    {"id": 1, "title": "Iris Out", "artist": "Kenshi Yonezu", "file": "irisOut.mp3", "image": "irisOut.webp", "genre": "Lo-fi"},
+    {"id": 2, "title": "Blinding Lights", "artist": "The Weeknd", "file": "blindingLights.mp3", "image": "blindingLights.png", "genre": "Pop"},
+    {"id": 3, "title": "Let the world burn", "artist": "Chris Grey", "file": "lettheworldburn.mp3", "image": "lettheworldburn.jpg", "genre": "Rock"},
+    {"id": 4, "title": "Saphire", "artist": "Ed Sheeran", "file": "saphire.mp3", "image": "saphire.png", "genre": "Acoustic"},
+    {"id": 5, "title": "Specialz", "artist": "King Gnu", "file": "specialz.mp3", "image": "specialz.jpg", "genre": "Rock"},
+    {"id": 6, "title": "Superpower", "artist": "Kiss of Life", "file": "superpower.mp3", "image": "superpower.webp", "genre": "Pop"},
+    {"id": 7, "title": "Just Keep Watching", "artist": "Tate McRae", "file": "justkeepwatching.mp3", "image": "justkeepwatching.png", "genre": "Acoustic"},
+    {"id": 8, "title": "StarBoy", "artist": "The Weeknd", "file": "starboy.mp3", "image": "starboy.jpg", "genre": "EDM"},
+    {"id": 9, "title": "KuLoSa", "artist": "Oxlade", "file": "kulosa.mp3", "image": "kulosa.jpg", "genre": "Lo-fi"},
+    {"id": 10, "title": "Espresso", "artist": "Sabrina Carpenter", "file": "espresso.mp3", "image": "espresso.png", "genre": "Pop"},
+    {"id": 11, "title": "Middle of the night", "artist": "Elley Duhe", "file": "middleofthenight.mp3", "image": "middleofthenight.png", "genre": "EDM"},
+    {"id": 12, "title": "One Dance", "artist": "Drake", "file": "onedance.mp3", "image": "onedance.png", "genre": "Rap/Hip-Hop"},
+    {"id": 13, "title": "Shape of you", "artist": "Ed Sheeran", "file": "shapeofyou.mp3", "image": "shapeofyou.png", "genre": "Pop"},
+    {"id": 14, "title": "Taki Taki", "artist": "Dj Snake", "file": "takitaki.mp3", "image": "takitaki.png", "genre": "EDM"},
+    {"id": 15, "title": "Let me Love You", "artist": "Justin Bieber", "file": "letmeloveyou.mp3", "image": "letmeloveyou.jpg", "genre": "Pop"},
+    {"id": 16, "title": "Perfect", "artist": "Ed Sheeran", "file": "perfect.mp3", "image": "perfect.jpg", "genre": "Acoustic"},
+    {"id": 17, "title": "Moral of the Story", "artist": "Ashe", "file": "moralofthestory.mp3", "image": "moralofthestory.jpg", "genre": "Acoustic"}
 ]
 
-
-# --- Routes --- #
+# --- ROUTES --- #
 @app.route('/')
 def index():
     if 'user' not in session:
         return redirect(url_for('login'))
     return render_template('index.html', songs=SONGS, user=session['user'])
 
-
 @app.route('/search')
 def search():
     if 'user' not in session:
         return redirect(url_for('login'))
     query = request.args.get('query', '').lower()
-    results = [s for s in SONGS if query in s['title'].lower() or query in s['artist'].lower()]
+    results = [s for s in SONGS if query in s['title'].lower() or query in s['artist'].lower() or query in s['genre'].lower()]
     return render_template('search.html', results=results, query=query, user=session['user'])
-
 
 @app.route('/player/<int:song_id>')
 def player(song_id):
@@ -59,22 +57,111 @@ def player(song_id):
     if not song:
         return "Song not found", 404
 
-    # ✅ Smart recommendation system
+    same_genre = [s for s in SONGS if s["genre"] == song["genre"] and s["id"] != song_id]
     same_artist = [s for s in SONGS if s["artist"] == song["artist"] and s["id"] != song_id]
-    other_songs = [s for s in SONGS if s["artist"] != song["artist"]]
-    random.shuffle(other_songs)
+    remaining = [s for s in SONGS if s["id"] != song_id and s not in same_genre + same_artist]
+    random.shuffle(same_genre)
+    random.shuffle(same_artist)
+    random.shuffle(remaining)
+    related = (same_genre[:4] + same_artist[:2] + remaining[:4])[:6]
 
-    # Combine: prioritize same artist, then fill from others
-    related = same_artist + other_songs
-    random.shuffle(related)
-    related = related[:6]
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM playlists WHERE user = ?", (session['user'],))
+    user_playlists = cursor.fetchall()
+    conn.close()
 
-    return render_template("player.html", song=song, related=related, songs=SONGS, user=session['user'])
+    return render_template("player.html", song=song, related=related, songs=SONGS, user=session['user'], user_playlists=user_playlists)
 
+# --- PLAYLIST SYSTEM --- #
+@app.route('/playlists')
+def playlists():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM playlists WHERE user = ?", (session['user'],))
+    playlists = cursor.fetchall()
+    conn.close()
+    return render_template('playlists.html', playlists=playlists, user=session['user'])
 
-# --- Authentication --- #
+@app.route('/create_playlist', methods=['POST'])
+def create_playlist():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    name = request.form['name']
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO playlists (user, name) VALUES (?, ?)", (session['user'], name))
+    conn.commit()
+    conn.close()
+    flash(f"✅ Playlist '{name}' created!", "success")
+    return redirect(url_for('playlists'))
+
+@app.route('/playlist/<int:playlist_id>')
+def view_playlist(playlist_id):
+    if 'user' not in session:
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM playlists WHERE id = ? AND user = ?", (playlist_id, session['user']))
+    playlist = cursor.fetchone()
+
+    if not playlist:
+        flash("⚠️ Playlist not found!", "error")
+        conn.close()
+        return redirect(url_for('playlists'))
+
+    cursor.execute("SELECT song_id FROM playlist_songs WHERE playlist_id = ?", (playlist_id,))
+    song_ids = [row['song_id'] for row in cursor.fetchall()]
+    songs = [s for s in SONGS if s['id'] in song_ids]
+
+    conn.close()
+    return render_template('view_playlist.html', playlist=playlist, songs=songs, user=session['user'])
+
+# ✅ AJAX Add to Playlist (No reload)
+@app.route('/add_to_playlist/<int:song_id>', methods=['POST'])
+def add_to_playlist(song_id):
+    if 'user' not in session:
+        return jsonify({"status": "unauthorized"}), 401
+
+    playlist_id = request.form['playlist_id']
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM playlist_songs WHERE playlist_id = ? AND song_id = ?", (playlist_id, song_id))
+    exists = cursor.fetchone()
+
+    if not exists:
+        cursor.execute("INSERT INTO playlist_songs (playlist_id, song_id) VALUES (?, ?)", (playlist_id, song_id))
+        conn.commit()
+        conn.close()
+        return jsonify({"status": "success", "message": "Song added!"}), 200
+    else:
+        conn.close()
+        return jsonify({"status": "exists", "message": "Already in this playlist!"}), 200
+@app.route('/song_playlists/<int:song_id>')
+def song_playlists(song_id):
+    """Return JSON list of playlist IDs where this song already exists."""
+    if 'user' not in session:
+        return jsonify([])
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT playlist_id FROM playlist_songs
+        WHERE song_id = ? AND playlist_id IN (
+            SELECT id FROM playlists WHERE user = ?
+        )
+    """, (song_id, session['user']))
+    data = [row['playlist_id'] for row in cursor.fetchall()]
+    conn.close()
+    return jsonify(data)
+
+# --- AUTHENTICATION --- #
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    session.pop('_flashes', None)
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -99,9 +186,9 @@ def register():
 
     return render_template('register.html')
 
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    session.pop('_flashes', None)
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -121,13 +208,12 @@ def login():
 
     return render_template('login.html')
 
-
 @app.route('/logout')
 def logout():
     session.pop('user', None)
     flash("👋 You have been logged out.", "info")
     return redirect(url_for('login'))
 
-
+# --- Run App --- #
 if __name__ == '__main__':
     app.run(debug=True)
