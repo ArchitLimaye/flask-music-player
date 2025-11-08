@@ -52,6 +52,10 @@ SONGS = [
     {"id": 22, "title": "Believer", "artist": "Imagine Dragons", "file": "beliver.mp3", "image": "believer.jpg", "genre": "Rock"},
     {"id": 23, "title": "Night Changes", "artist": "One Direction", "file": "nightchanges.mp3", "image": "nightchanges.png", "genre": "Acoustic"},
     {"id": 24, "title": "Closer", "artist": "Chainsmokers", "file": "closer.mp3", "image": "closer.png", "genre": "EDM"},
+    {"id": 25, "title": "Lover", "artist": "Taylor Swift", "file": "lover.mp3", "image": "lover.png", "genre": "Pop"},
+    {"id": 26, "title": "Story of my Life", "artist": "One Direction", "file": "storyofmylife.mp3", "image": "storyofmylife.png", "genre": "Pop"},
+    {"id": 27, "title": "Perfect", "artist": "One Direction", "file": "perfect2.mp3", "image": "perfect2.png", "genre": "Acoustic"},
+    {"id": 28, "title": "Until I Found You", "artist": "Stephen Sanchez", "file": "untilifoundyou.mp3", "image": "untilifoundyou.png", "genre": "Lofi"},
 ]
 
 

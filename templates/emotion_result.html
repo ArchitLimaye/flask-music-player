@@ -14,7 +14,7 @@
 <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:25px; margin-top:30px;">
   {% for s in recommended %}
   <div style="background:#1e1e1e; border-radius:16px; padding:15px; width:180px; cursor:pointer;"
-       onclick="window.location.href='{{ url_for('player', song_id=s.id) }}'">
+       <a href="{{ url_for('player', song_id=s.id) }}" class="song-card">
     <img src="{{ url_for('static', filename='images/' + s.image) }}" style="width:100%; border-radius:12px;">
     <h4>{{ s.title }}</h4>
     <p>{{ s.artist }}</p>
