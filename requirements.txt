@@ -4,3 +4,8 @@ jinja2
 werkzeug
 itsdangerous
 click
+opencv-python
+deepface
+tensorflow
+numpy
+pandas

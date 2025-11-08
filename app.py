@@ -1,16 +1,30 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
+from deepface import DeepFace
 import sqlite3
 import random
+import os
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
+
+# --- Folders for image uploads --- #
+UPLOAD_FOLDER = "static/uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
+
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 # --- DB Connection Helper --- #
 def get_db_connection():
     conn = sqlite3.connect('users.db')
     conn.row_factory = sqlite3.Row
     return conn
+
 
 # --- SONG DATA --- #
 SONGS = [
@@ -31,15 +45,15 @@ SONGS = [
     {"id": 15, "title": "Let me Love You", "artist": "Justin Bieber", "file": "letmeloveyou.mp3", "image": "letmeloveyou.jpg", "genre": "Pop"},
     {"id": 16, "title": "Perfect", "artist": "Ed Sheeran", "file": "perfect.mp3", "image": "perfect.jpg", "genre": "Acoustic"},
     {"id": 17, "title": "Moral of the Story", "artist": "Ashe", "file": "moralofthestory.mp3", "image": "moralofthestory.jpg", "genre": "Acoustic"},
-    {"id": 18, "title": "Runaway", "artist": "Aurora", "file": "runaway.mp3", "image": "runaway.png", "genre": "lofi"},
-    {"id": 19, "title": "Snowman", "artist": "Sia", "file": "snowman.mp3", "image": "snowman.jpeg", "genre": "lofi"},
+    {"id": 18, "title": "Runaway", "artist": "Aurora", "file": "runaway.mp3", "image": "runaway.png", "genre": "Lo-fi"},
+    {"id": 19, "title": "Snowman", "artist": "Sia", "file": "snowman.mp3", "image": "snowman.jpeg", "genre": "Lo-fi"},
     {"id": 20, "title": "Cheap Thrills", "artist": "Sia", "file": "cheapthrills.mp3", "image": "cheapthrills.png", "genre": "Pop"},
     {"id": 21, "title": "Happy", "artist": "Pharrell Williams", "file": "happy.mp3", "image": "happy.jpg", "genre": "Pop"},
     {"id": 22, "title": "Believer", "artist": "Imagine Dragons", "file": "beliver.mp3", "image": "believer.jpg", "genre": "Rock"},
-    {"id": 23, "title": "Night Changes", "artist": "One Direction", "file": "nibhtchanges.mp3", "image": "nightchanges.png", "genre": "Acoustic"},
+    {"id": 23, "title": "Night Changes", "artist": "One Direction", "file": "nightchanges.mp3", "image": "nightchanges.png", "genre": "Acoustic"},
     {"id": 24, "title": "Closer", "artist": "Chainsmokers", "file": "closer.mp3", "image": "closer.png", "genre": "EDM"},
-
 ]
+
 
 # --- ROUTES --- #
 
@@ -49,6 +63,7 @@ def index():
         return redirect(url_for('login'))
     return render_template('index.html', songs=SONGS, user=session['user'])
 
+
 @app.route('/search')
 def search():
     if 'user' not in session:
@@ -56,6 +71,7 @@ def search():
     query = request.args.get('query', '').lower()
     results = [s for s in SONGS if query in s['title'].lower() or query in s['artist'].lower() or query in s['genre'].lower()]
     return render_template('search.html', results=results, query=query, user=session['user'])
+
 
 # === PLAYER PAGE === #
 @app.route('/player/<int:song_id>')
@@ -67,7 +83,7 @@ def player(song_id):
     if not song:
         return "Song not found", 404
 
-    same_genre = [s for s in SONGS if s["genre"] == song["genre"] and s["id"] != song_id]
+    same_genre = [s for s in SONGS if s["genre"].lower() == song["genre"].lower() and s["id"] != song_id]
     same_artist = [s for s in SONGS if s["artist"] == song["artist"] and s["id"] != song_id]
     remaining = [s for s in SONGS if s["id"] != song_id and s not in same_genre + same_artist]
     random.shuffle(same_genre)
@@ -93,6 +109,70 @@ def player(song_id):
         existing_playlists=existing_playlists
     )
 
+
+# === FACIAL EMOTION DETECTION === #
+@app.route('/emotion')
+def emotion_page():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    return render_template('emotion.html', user=session['user'])
+
+
+@app.route('/detect_emotion', methods=['POST'])
+def detect_emotion():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+
+    if 'image' not in request.files:
+        flash("⚠️ Please upload an image.", "error")
+        return redirect(url_for('emotion_page'))
+
+    image = request.files['image']
+    if image.filename == "":
+        flash("⚠️ No image selected!", "error")
+        return redirect(url_for('emotion_page'))
+
+    if not allowed_file(image.filename):
+        flash("⚠️ Only image files (png, jpg, jpeg, webp) are allowed.", "error")
+        return redirect(url_for('emotion_page'))
+
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], image.filename)
+    image.save(filepath)
+
+    try:
+        result = DeepFace.analyze(img_path=filepath, actions=["emotion"], enforce_detection=False)
+        if isinstance(result, list):
+            result = result[0]
+        emotion = result.get("dominant_emotion", "Neutral").capitalize()
+
+        emotion_genre_map = {
+            "Happy": "Pop",
+            "Sad": "Acoustic",
+            "Angry": "Rock",
+            "Neutral": "Lo-fi",
+            "Surprise": "EDM",
+            "Fear": "Lo-fi",
+            "Disgust": "Rap/Hip-Hop"
+        }
+
+        genre = emotion_genre_map.get(emotion, "Pop")
+        recommended = [s for s in SONGS if s["genre"].lower() == genre.lower()]
+        random.shuffle(recommended)
+        recommended = recommended[:6]
+
+        return render_template(
+            "emotion_result.html",
+            emotion=emotion,
+            genre=genre,
+            image_file=image.filename,
+            recommended=recommended,
+            user=session['user']
+        )
+    except Exception as e:
+        flash(f"❌ Error detecting emotion: {e}", "error")
+        return redirect(url_for('emotion_page'))
+
+
 # === PLAYLIST SYSTEM === #
 @app.route('/playlists')
 def playlists():
@@ -104,6 +184,7 @@ def playlists():
     playlists = cursor.fetchall()
     conn.close()
     return render_template('playlists.html', playlists=playlists, user=session['user'])
+
 
 @app.route('/create_playlist', methods=['POST'])
 def create_playlist():
@@ -117,6 +198,7 @@ def create_playlist():
     conn.close()
     flash(f"✅ Playlist '{name}' created!", "success")
     return redirect(url_for('playlists'))
+
 
 @app.route('/playlist/<int:playlist_id>')
 def view_playlist(playlist_id):
@@ -137,6 +219,7 @@ def view_playlist(playlist_id):
     songs = [s for s in SONGS if s['id'] in song_ids]
     conn.close()
     return render_template('view_playlist.html', playlist=playlist, songs=songs, user=session['user'])
+
 
 # === AJAX ADD TO PLAYLIST === #
 @app.route('/add_to_playlist/<int:song_id>', methods=['POST'])
@@ -171,21 +254,6 @@ def add_to_playlist(song_id):
     conn.close()
     return jsonify({"status": "success", "message": "🎵 Song added successfully!"}), 200
 
-# === Check Playlists Containing Song === #
-@app.route('/api/song_in_playlists/<int:song_id>')
-def song_in_playlists(song_id):
-    if 'user' not in session:
-        return jsonify([])
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("""
-        SELECT playlist_id FROM playlist_songs
-        WHERE song_id = ? AND playlist_id IN
-        (SELECT id FROM playlists WHERE user = ?)
-    """, (song_id, session['user']))
-    playlists = [row['playlist_id'] for row in cursor.fetchall()]
-    conn.close()
-    return jsonify(playlists)
 
 # === AUTHENTICATION === #
 @app.route('/register', methods=['GET', 'POST'])
@@ -212,6 +280,7 @@ def register():
 
     return render_template('register.html')
 
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     session.pop('_flashes', None)
@@ -231,11 +300,13 @@ def login():
             flash("❌ Invalid username or password!", "error")
     return render_template('login.html')
 
+
 @app.route('/logout')
 def logout():
     session.pop('user', None)
     flash("👋 You have been logged out.", "info")
     return redirect(url_for('login'))
+
 
 if __name__ == '__main__':
     app.run(debug=True)

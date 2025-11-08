@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🎭 Facial Emotion Detection</title>
+  <style>
+    body {
+      background-color: #0b0b0b;
+      color: white;
+      font-family: "Poppins", sans-serif;
+      text-align: center;
+      padding: 60px;
+    }
+    .upload-box {
+      background: #1e1e1e;
+      border-radius: 20px;
+      padding: 40px;
+      width: 420px;
+      margin: 0 auto;
+      box-shadow: 0 0 30px rgba(0,191,255,0.3);
+    }
+    input[type="file"] { margin: 20px 0; color: white; }
+    button {
+      background: #00bfff;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 10px;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover { background: #00a3cc; }
+  </style>
+</head>
+<body>
+  <h1>😄 Facial Emotion Detection</h1>
+  <div class="upload-box">
+    <form id="emotionForm" action="{{ url_for('detect_emotion') }}" method="POST" enctype="multipart/form-data">
+      <label>Upload your face image:</label><br>
+      <input type="file" name="image" accept="image/*" required><br>
+      <button type="submit">Analyze Emotion</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById("emotionForm").addEventListener("submit", () => {
+      console.log("✅ Form submitted — waiting for server response...");
+    });
+  </script>
+</body>
+</html>

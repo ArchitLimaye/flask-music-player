@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Music Player{% endblock %}</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #0b0b0b;
+      color: white;
+      font-family: "Poppins", sans-serif;
+      display: flex;
+    }
+
+    /* --- Sidebar --- */
+    .sidebar {
+      width: 220px;
+      background: #141414;
+      padding: 25px;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      box-shadow: 0 0 15px rgba(0,191,255,0.1);
+      position: fixed;
+      top: 0;
+      left: 0;
+    }
+
+    .sidebar .title {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #00bfff;
+      margin-bottom: 30px;
+    }
+
+    .sidebar a {
+      display: block;
+      color: #ccc;
+      text-decoration: none;
+      padding: 10px 14px;
+      border-radius: 12px;
+      transition: 0.3s;
+      font-size: 1rem;
+      margin-bottom: 10px;
+    }
+
+    .sidebar a:hover {
+      background: #1e1e1e;
+      color: #00bfff;
+      transform: scale(1.03);
+    }
+
+    /* --- Main Content --- */
+    .main {
+      flex: 1;
+      margin-left: 250px;
+      padding: 40px;
+      text-align: center;
+    }
+
+    .content-box {
+      background: #1e1e1e;
+      border-radius: 20px;
+      padding: 40px;
+      width: 450px;
+      margin: 40px auto;
+      box-shadow: 0 0 25px rgba(0,191,255,0.3);
+    }
+
+    button {
+      background: #00bfff;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 10px;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #00a3cc;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="title">🎵 MusicPlayer</div>
+    <a href="{{ url_for('index') }}">🏠 Home</a>
+    <a href="{{ url_for('emotion_page') }}">🎭 Facial Emotion</a>
+    <a href="{{ url_for('playlists') }}">📂 Playlists</a>
+    <a href="{{ url_for('logout') }}">🚪 Logout</a>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+    {% block content %}
+    {% endblock %}
+  </div>
+
+</body>
+</html>
