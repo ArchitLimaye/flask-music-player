@@ -166,15 +166,35 @@
 
       <!-- Recommended Songs -->
       <h3 style="margin-top: 40px;">Recommended Songs</h3>
-      <div class="recommended-grid">
-        {% for s in related[:12] %}
-        <div class="song-card" onclick="window.location.href='/player/{{ s.id }}'">
-          <img src="{{ url_for('static', filename='images/' + s.image) }}" alt="{{ s.title }}">
-          <h4>{{ s.title }}</h4>
-          <p>{{ s.artist }}</p>
-        </div>
-        {% endfor %}
-      </div>
+      <h2 class="section-title">Recommended Songs</h2>
+
+<div class="carousel-container">
+<h2 class="section-title">Recommended Songs</h2>
+
+<div class="carousel-wrapper">
+  <button class="carousel-btn left" onclick="scrollCarousel(-1)">&#10094;</button>
+
+  <div class="carousel" id="recommendedCarousel">
+    {% for song in related %}
+    <div class="song-card" onclick="window.location.href='/player/{{ song.id }}'">
+      <img src="{{ url_for('static', filename='images/' + song.image) }}" alt="{{ song.title }}">
+      <h3>{{ song.title }}</h3>
+      <p>{{ song.artist }}</p>
+    </div>
+    {% endfor %}
+  </div>
+
+  <button class="carousel-btn right" onclick="scrollCarousel(1)">&#10095;</button>
+</div>
+
+<script>
+function scrollCarousel(direction) {
+  const carousel = document.getElementById("recommendedCarousel");
+  const scrollAmount = carousel.clientWidth * 0.8;
+  carousel.scrollBy({ left: direction * scrollAmount, behavior: "smooth" });
+}
+</script>
+
     </div>
   </div>
 
