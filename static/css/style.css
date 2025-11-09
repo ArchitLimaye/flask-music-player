@@ -9,39 +9,95 @@ body {
 }
 
 /* ===== SIDEBAR ===== */
+/* ===== SMART SIDEBAR (EMOJI → TEXT on HOVER) ===== */
 .sidebar {
   position: fixed;
   top: 0;
   left: 0;
-  width: 70px; /* collapsed width */
+  width: 70px; /* collapsed */
   height: 100vh;
-  background-color: #1e1e1e;
+  background: linear-gradient(180deg, #1a1a1a, #111);
   overflow: hidden;
   transition: width 0.3s ease;
-  z-index: 50;
+  z-index: 100;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .sidebar:hover {
-  width: 200px; /* expanded width */
-  display: block;
+  width: 270px;
+  align-items: flex-start;
 }
 
+/* Sidebar items container */
 .features {
-  padding: 80px 10px 10px 10px; /* space below header */
+  padding-top: 80px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
+/* Each feature item */
 .feature {
-  padding: 15px;
+  position: relative;
+  width: 100%;
+  color: #bbb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 0;
   cursor: pointer;
-  color: #aaa;
-  transition: color 0.3s, transform 0.2s;
-  white-space: nowrap;
+  transition: all 0.25s ease;
+  font-size: 1.4rem;
 }
 
 .feature:hover {
   color: #00bfff;
-  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateX(4px);
 }
+
+/* Text label (hidden by default) */
+.feature span {
+  position: absolute;
+  left: 70px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s, transform 0.3s;
+  white-space: nowrap;
+  font-size: 1rem;
+}
+
+/* When sidebar expands → hide emoji, show text */
+.sidebar:hover .feature {
+  justify-content: flex-start;
+  font-size: 1rem;
+  padding-left: 20px;
+}
+
+.sidebar:hover .feature::before {
+  display: none;
+}
+
+.sidebar:hover .feature span {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+/* Default emoji icons */
+.feature:nth-child(1)::before { content: "🎧"; }
+.feature:nth-child(2)::before { content: "😄"; }
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
 
 /* ===== HEADER BAR ===== */
 .header-bar {
@@ -63,7 +119,7 @@ body {
 
 /* when sidebar expands, shift header */
 .sidebar:hover ~ .header-bar {
-  left: 200px;
+  left: 270px;
 }
 
 /* ===== LOGO ===== */

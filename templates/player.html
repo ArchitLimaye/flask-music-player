@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ song.title }} - Player</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/player.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
  <style>
     /* === Floating Playlist Dropdown on Right === */
     .playlist-wrapper {
@@ -106,12 +107,16 @@
 
 <body>
   <!-- Sidebar -->
-  <div class="sidebar">
-    <div class="features">
-      <div class="feature" onclick="window.location.href='/playlists'">Playlists</div>
-      <div class="feature" onclick="window.location.href='/emotion'">Facial Recommendatio</div>
+<div class="sidebar">
+  <div class="features">
+    <div class="feature" onclick="window.location.href='/playlists'">
+      <span>Playlists</span>
+    </div>
+    <div class="feature" onclick="window.location.href='/emotion'">
+      <span>Facial Recommendation  </span>
     </div>
   </div>
+</div>
 
   <!-- Header -->
   <header class="header-bar">

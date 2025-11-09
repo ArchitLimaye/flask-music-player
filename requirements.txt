@@ -4,7 +4,7 @@ jinja2
 werkzeug
 itsdangerous
 click
-opencv-python-headless==4.9.0.80
+opencv-python-headless==4.8.0.74
 deepface==0.0.95
 tensorflow-cpu==2.15.0
 numpy

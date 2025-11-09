@@ -5,6 +5,9 @@ from deepface import DeepFace
 import sqlite3
 import random
 import os
+import os
+os.environ["OPENCV_VIDEOIO_PRIORITY_MSMF"] = "0"  # disable GUI backend
+os.environ["QT_QPA_PLATFORM"] = "offscreen"        # no GUI needed
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
