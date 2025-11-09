@@ -1,31 +1,26 @@
-# Use a lightweight Python base image
+# Base image
 FROM python:3.11-slim
 
-# Install OS-level dependencies required for OpenCV (libGL, libglib)
+# --- Fix for OpenCV + DeepFace: install missing dependencies ---
 RUN apt-get update && apt-get install -y \
-    libgl1 \
+    libgl1-mesa-glx \
     libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
-# Set the working directory
+# Set working directory
 WORKDIR /app
 
-# Copy dependency file first
+# Copy dependencies first
 COPY requirements.txt .
 
 # Install Python packages
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy all your app files
+# Copy your app
 COPY . .
 
-# Set environment variables for safety
-ENV QT_QPA_PLATFORM=offscreen
-ENV TF_CPP_MIN_LOG_LEVEL=2
-ENV TF_ENABLE_ONEDNN_OPTS=0
-
-# Expose the port Railway uses
+# Expose port
 EXPOSE 8080
 
-# Run Flask via Gunicorn
+# Run with Gunicorn
 CMD ["gunicorn", "--bind", "0.0.0.0:8080", "main:app"]
