@@ -209,17 +209,29 @@
 /* === GENRE COLOR THEMES === */
 
 /* 🎶 LO-FI — Dreamy pastel tones */
-.player-card.lofi::before {
-  background: conic-gradient(from 0deg, #6dd5fa, #cc99ff, #f7797d, #84fab0, #6dd5fa);
+.player-card.lofi::before,
+.player-card.lo-fi::before {
+  background: conic-gradient(
+    from 0deg,
+    #6dd5fa,
+    #cc99ff,
+    #f7797d,
+    #84fab0,
+    #6dd5fa
+  );
 }
-.player-card.lofi::after {
-  background: linear-gradient(180deg,
+
+.player-card.lofi::after,
+.player-card.lo-fi::after {
+  background: linear-gradient(
+    180deg,
     rgba(173, 216, 230, 0.35),
     rgba(204, 153, 255, 0.35),
     rgba(247, 121, 125, 0.3),
     rgba(132, 250, 176, 0.3)
   );
 }
+
 
 /* 🎸 ROCK — Red-orange flames */
 .player-card.rock::before {
