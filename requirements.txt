@@ -4,7 +4,7 @@ jinja2
 werkzeug
 itsdangerous
 click
-opencv-python
+opencv-python-headless
 deepface
 tensorflow
 numpy
