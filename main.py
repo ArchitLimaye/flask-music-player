@@ -5,10 +5,7 @@ from deepface import DeepFace
 import sqlite3
 import random
 import os
-
-# Prevent GUI & GPU issues on cloud
 os.environ["QT_QPA_PLATFORM"] = "offscreen"
-os.environ["OPENCV_VIDEOIO_PRIORITY_MSMF"] = "0"
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 
