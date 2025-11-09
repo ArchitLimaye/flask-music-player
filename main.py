@@ -6,11 +6,14 @@ import sqlite3
 import random
 import os
 
-# Prevent GUI and GPU usage
+# Prevent GUI & GPU issues on cloud
 os.environ["QT_QPA_PLATFORM"] = "offscreen"
 os.environ["OPENCV_VIDEOIO_PRIORITY_MSMF"] = "0"
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
+
+from flask import Flask
+from deepface import DeepFace
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
