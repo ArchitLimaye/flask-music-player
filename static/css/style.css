@@ -23,6 +23,7 @@ body {
 
 .sidebar:hover {
   width: 200px; /* expanded width */
+  display: block;
 }
 
 .features {
@@ -678,3 +679,4 @@ body {
   text-align: center;
   margin-bottom: 30px;
 }
+

@@ -4,9 +4,9 @@ jinja2
 werkzeug
 itsdangerous
 click
-opencv-python-headless
-deepface
-tensorflow
+opencv-python-headless==4.9.0.80
+deepface==0.0.95
+tensorflow-cpu==2.15.0
 numpy
 pandas
 tf-keras
