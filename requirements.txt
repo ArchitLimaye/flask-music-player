@@ -1,12 +1,11 @@
 flask
 gunicorn
+opencv-python-headless
+deepface
+tensorflow-cpu
+numpy
+pandas
 jinja2
 werkzeug
 itsdangerous
 click
-opencv-python-headless==4.9.0.80
-deepface==0.0.95
-tensorflow-cpu==2.17.0
-numpy
-pandas
-tf-keras
