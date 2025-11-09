@@ -384,8 +384,10 @@ def lyra_reply():
         }
     elif any(k in user_msg for k in ["hi", "hello", "hey"]):
         reply = {"type": "text", "message": "Hey there! 👋 I’m Lyra — your music companion. Type 'recommend' to see options!"}
-    elif "weeknd" in user_msg:
+    elif any(k in user_msg for k in ["Weeknd ", "weeknd "]):
         reply = {"type": "text", "message": "🔥 The Weeknd always delivers! Try 'Starboy' or 'Blinding Lights'."}
+    elif any(k in user_msg for k in ["Ed Sheeran ", "Ed sheeran "]):
+        reply = {"type": "text", "message": "I Love his songs! Try listening to Perfect and Shape of you"}    
     else:
         reply = {"type": "text", "message": "I'm Lyra 🎶 — try typing 'recommend' to see my recommendation modes!"}
 
