@@ -13,14 +13,12 @@
     <div class="features">
       <div class="feature" onclick="window.location.href='/playlists'">🎧 Playlists</div>
       <div class="feature" onclick="window.location.href='/emotion'">😄 Facial Emotion</div>
-      <div class="feature" onclick="window.location.href='/genremusic'">🎵 Genre Playlists</div>
-      <div class="feature" onclick="window.location.href='/artistmusic'">🎤 Artist Playlists</div>
     </div>
   </div>
 
   <!-- Header -->
   <header class="header-bar">
-    <a class="logo" href="{{ url_for('index') }}">🎵 MusicPlayer</a>
+    <a class="logo" href="{{ url_for('index') }}">Sound Stream</a>
 
     <div class="profile-container">
       {% if 'user' in session %}
@@ -45,7 +43,7 @@
 
   <!-- Main Section -->
   <div class="main">
-    <h1 class="title">🎶 Web Music Player</h1>
+    <h1 class="title">Sound Stream</h1>
 
     <form class="search-container" action="/search" method="get">
       <input type="text" name="query" placeholder="Search for songs or artists..." required>

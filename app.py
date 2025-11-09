@@ -57,7 +57,7 @@ SONGS = [
     {"id": 27, "title": "Perfect", "artist": "One Direction", "file": "perfect2.mp3", "image": "perfect2.png", "genre": "Acoustic"},
     {"id": 28, "title": "Until I Found You", "artist": "Stephen Sanchez", "file": "untilifoundyou.mp3", "image": "untilifoundyou.png", "genre": "Lofi"},
     {"id": 29, "title": "Good For You", "artist": "Selena Gomez", "file": "goodforyou.mp3", "image": "goodforyou.png", "genre": "Pop"},
-    {"id": 30, "title": "I Wanna Be Yours", "artist": "Arctic Monkeys", "file": "iwannabeyours.mp3", "image": "iwannabeyours.png", "genre": "Rock"},
+    {"id": 30, "title": "I Wanna Be Yours", "artist": "Arctic Monkeys", "file": "iwannabeyours.mp3", "image": "iwannabeyours.jpg", "genre": "Rock"},
     {"id": 31, "title": "Animals", "artist": "Maroon 5", "file": "animals.mp3", "image": "animals.png", "genre": "Pop"},
     {"id": 32, "title": "As It Was", "artist": "Harry Styles", "file": "asitwas.mp3", "image": "asitwas.png", "genre": "Pop"},
 
