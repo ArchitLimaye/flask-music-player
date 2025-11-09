@@ -1,14 +1,16 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
-from deepface import DeepFace
-import sqlite3
-import random
 import os
 os.environ["QT_QPA_PLATFORM"] = "offscreen"
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 
+from deepface import DeepFace
+
+from deepface import DeepFace
+import sqlite3
+import random
 from flask import Flask
 from deepface import DeepFace
 

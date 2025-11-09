@@ -1,27 +1,35 @@
-# Use a lightweight base
+# ---- Base image ----
 FROM python:3.11-slim
 
-# Install OpenCV dependencies manually
-RUN apt-get update && apt-get install -y \
+# ---- Prevent interactive prompts ----
+ENV DEBIAN_FRONTEND=noninteractive
+
+# ---- Working directory ----
+WORKDIR /app
+
+# ---- Copy project ----
+COPY . /app
+
+# ---- Install dependencies for OpenCV / DeepFace ----
+RUN apt-get update && apt-get install -y --no-install-recommends \
     libgl1 \
     libglib2.0-0 \
     libsm6 \
     libxrender1 \
     libxext6 \
-    && rm -rf /var/lib/apt/lists/*
+    ffmpeg \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
-WORKDIR /app
-
-# Copy requirements first and install
-COPY requirements.txt .
+# ---- Python dependencies ----
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the app
-COPY . .
+# ---- Environment variables to stop TensorFlow / Qt GUI issues ----
+ENV QT_QPA_PLATFORM=offscreen
+ENV TF_CPP_MIN_LOG_LEVEL=2
+ENV TF_ENABLE_ONEDNN_OPTS=0
 
-# Expose port
+# ---- Expose port ----
 EXPOSE 8080
 
-# Run app using Gunicorn
+# ---- Run Flask app with Gunicorn ----
 CMD ["gunicorn", "--bind", "0.0.0.0:8080", "main:app"]

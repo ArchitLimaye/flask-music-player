@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.png') }}" type="image/x-icon">
   <title>{{ song.title }} - Player</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/player.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
@@ -140,34 +141,35 @@
         <button type="submit">🔍</button>
       </form>
 
-      <div class="player-card">
-        <img src="{{ url_for('static', filename='images/' + song.image) }}" alt="{{ song.title }}" class="album-art">
-        <h2>{{ song.title }}</h2>
-        <p>{{ song.artist }}</p>
+<div class="player-card {{ song.genre|lower }}">
+  <img src="{{ url_for('static', filename='images/' + song.image) }}" alt="{{ song.title }}" class="album-art">
+  <h2>{{ song.title }}</h2>
+  <p>{{ song.artist }}</p>
 
-        <!-- Controls -->
-        <div class="controls">
-          <button class="control-btn" onclick="prevSong()">⏮</button>
-          <button id="repeatBtn" class="control-btn" onclick="toggleRepeat()">🔁</button>
-          <button id="playBtn" class="control-btn">▶</button>
-          <button class="control-btn" onclick="nextSong()">⏭</button>
-        </div>
+  <!-- Controls -->
+  <div class="controls">
+    <button class="control-btn" onclick="prevSong()">⏮</button>
+    <button id="repeatBtn" class="control-btn" onclick="toggleRepeat()">🔁</button>
+    <button id="playBtn" class="control-btn">▶</button>
+    <button class="control-btn" onclick="nextSong()">⏭</button>
+  </div>
 
-        <!-- Add to Playlist Button -->
-        <div class="playlist-add">
-          <button id="playlistBtn">➕ Add to Playlist</button>
-          <div id="playlistSuccess">✅ Added to Playlist!</div>
-        </div>
+  <!-- Add to Playlist Button -->
+  <div class="playlist-add">
+    <button id="playlistBtn">➕ Add to Playlist</button>
+    <div id="playlistSuccess">✅ Added to Playlist!</div>
+  </div>
 
-        <!-- Timeline -->
-        <div class="timeline-container">
-          <span id="currentTime">0:00</span>
-          <input type="range" id="timeline" value="0" step="1">
-          <span id="duration">0:00</span>
-        </div>
+  <!-- Timeline -->
+  <div class="timeline-container">
+    <span id="currentTime">0:00</span>
+    <input type="range" id="timeline" value="0" step="1">
+    <span id="duration">0:00</span>
+  </div>
 
-        <audio id="audioPlayer" src="{{ url_for('static', filename='songs/' + song.file) }}"></audio>
-      </div>
+  <audio id="audioPlayer" src="{{ url_for('static', filename='songs/' + song.file) }}"></audio>
+</div>
+
 
       <!-- Recommended Songs -->
       <h3 style="margin-top: 40px;">Recommended Songs</h3>
