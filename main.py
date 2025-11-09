@@ -6,8 +6,12 @@ import sqlite3
 import random
 import os
 import os
-os.environ["OPENCV_VIDEOIO_PRIORITY_MSMF"] = "0"  # disable GUI backend
-os.environ["QT_QPA_PLATFORM"] = "offscreen"        # no GUI needed
+
+# Disable all GUI / display backends (important for Railway)
+os.environ["QT_QPA_PLATFORM"] = "offscreen"
+os.environ["OPENCV_VIDEOIO_PRIORITY_MSMF"] = "0"
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
