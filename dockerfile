@@ -1,7 +1,7 @@
-# Use slim Python image
+# Use a lightweight base
 FROM python:3.11-slim
 
-# --- Fix OpenCV + DeepFace missing dependencies ---
+# Install OpenCV dependencies manually
 RUN apt-get update && apt-get install -y \
     libgl1 \
     libglib2.0-0 \
@@ -13,15 +13,15 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /app
 
-# Copy dependency list and install
+# Copy requirements first and install
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy all app files
+# Copy the rest of the app
 COPY . .
 
 # Expose port
 EXPOSE 8080
 
-# Start app with Gunicorn
+# Run app using Gunicorn
 CMD ["gunicorn", "--bind", "0.0.0.0:8080", "main:app"]
