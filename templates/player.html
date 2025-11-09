@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/player.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
  <style>
+  
     /* === Floating Playlist Dropdown on Right === */
     .playlist-wrapper {
       position: fixed;
@@ -103,6 +104,24 @@
       80% { opacity: 1; transform: translateY(0); }
       100% { opacity: 0; transform: translateY(-10px); }
     }
+.player-card {
+  position: relative;
+  width: 340px;
+  padding: 25px;
+  border-radius: 40px;
+  background: linear-gradient(180deg, #111 0%, #0d0d0d 100%);
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+  margin: 40px auto;
+  text-align: center;
+  animation: floatCard 6s ease-in-out infinite alternate;
+  transition: transform 0.3s ease;
+}
+@keyframes floatCard {
+  0% { transform: translateY(0px); }
+  100% { transform: translateY(-10px); }
+}
+
   </style>
 </head>
 
