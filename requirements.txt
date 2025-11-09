@@ -6,7 +6,7 @@ itsdangerous
 click
 opencv-python
 deepface
-tensorflow-cpu==2.15.0
+tensorflow
 numpy
 pandas
 tf-keras
