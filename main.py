@@ -80,6 +80,15 @@ SONGS = [
 {"id": 40, "title": "Chaleya", "artist": "Arijit Singh", "file": "chaleya.mp3", "image": "chaleya.jpg", "genre": "Acoustic", "language": "Hindi"},
 {"id": 41, "title": "Jo Tum Na Ho", "artist": "Arijit Singh", "file": "jotumnoho.mp3", "image": "jotumnaho.jpg", "genre": "Acoustic", "language": "Hindi"},
 {"id": 42, "title": "Deva Deva", "artist": "Arijit Singh", "file": "devadeva.mp3", "image": "devadeva.jpg", "genre": "Acoustic", "language": "Hindi"},
+{"id": 43, "title": "Deewani Mastani", "artist": "Shreya Ghoshal", "file": "deewanimastani.mp3", "image": "deewanimastani.jpg", "genre": "Acoustic", "language": "Hindi"},
+{"id": 44, "title": "Let Me Down Slowly", "artist": "Alec Benjamin", "file": "letmedownslowly.mp3", "image": "letmedownslowly.png", "genre": "Pop", "language": "English"},
+{"id": 45, "title": "Love Me Like You Do", "artist": "Ellie Goulding", "file": "lovemelikeyoudo.mp3", "image": "lovemelikeyoudo.jpeg", "genre": "Pop", "language": "English"},
+{"id": 46, "title": "Señorita", "artist": "Shawn Mendes & Camila Cabello", "file": "senorita.mp3", "image": "senorita.png", "genre": "Pop", "language": "English"},
+{"id": 47, "title": "What Makes You Beautiful", "artist": "One Direction", "file": "whatmakesyoubeautiful.mp3", "image": "whatmakesyoubeautiful.jpeg", "genre": "Pop", "language": "English"},
+{"id": 43, "title": "Deewani Mastani", "artist": "Shreya Ghoshal", "file": "deewanimastani.mp3", "image": "deewanimastani.jpg", "genre": "Acoustic", "language": "Hindi"},
+{"id": 44, "title": "Let Me Down Slowly", "artist": "Alec Benjamin", "file": "letmedownslowly.mp3", "image": "letmedownslowly.png", "genre": "Pop", "language": "English"},
+{"id": 45, "title": "Love Me Like You Do", "artist": "Ellie Goulding", "file": "lovemelikeyoudo.mp3", "image": "lovemelikeyoudo.jpeg", "genre": "Pop", "language": "English"},
+{"id": 46, "title": "Allah Duhai Hai", "artist": "Atif Aslam", "file": "allahduhaihai.mp3", "image": "allahduhaihai.jpg", "genre": "EDM", "language": "Hindi"},
 
 
 
