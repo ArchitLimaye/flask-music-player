@@ -55,6 +55,16 @@
       <input type="text" name="query" placeholder="Search for songs or artists..." required>
       <button type="submit">🔍</button>
     </form>
+    <div class="sort-container">
+  <form method="get" action="/">
+    <label for="sort" class="sort-label">Sort by:</label>
+    <select id="sort" name="sort" onchange="this.form.submit()">
+      <option value="">Random</option>
+      <option value="language">Language</option>
+    </select>
+  </form>
+</div>
+
 
     <div class="song-list">
       {% for song in songs %}

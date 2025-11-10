@@ -2,7 +2,7 @@ import os
 os.environ["QT_QPA_PLATFORM"] = "offscreen"
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
-
+import random
 from flask import Flask
 from deepface import DeepFace
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
@@ -34,50 +34,81 @@ def get_db_connection():
 
 # --- SONG DATA --- #
 SONGS = [
-    {"id": 1, "title": "Iris Out", "artist": "Kenshi Yonezu", "file": "irisOut.mp3", "image": "irisOut.webp", "genre": "Lo-fi"},
-    {"id": 2, "title": "Blinding Lights", "artist": "The Weeknd", "file": "blindingLights.mp3", "image": "blindingLights.png", "genre": "Pop"},
-    {"id": 3, "title": "Let the world burn", "artist": "Chris Grey", "file": "lettheworldburn.mp3", "image": "lettheworldburn.jpg", "genre": "Rock"},
-    {"id": 4, "title": "Saphire", "artist": "Ed Sheeran", "file": "saphire.mp3", "image": "saphire.png", "genre": "Acoustic"},
-    {"id": 5, "title": "Specialz", "artist": "King Gnu", "file": "specialz.mp3", "image": "specialz.jpg", "genre": "Rock"},
-    {"id": 6, "title": "Superpower", "artist": "Kiss of Life", "file": "superpower.mp3", "image": "superpower.webp", "genre": "Pop"},
-    {"id": 7, "title": "Just Keep Watching", "artist": "Tate McRae", "file": "justkeepwatching.mp3", "image": "justkeepwatching.png", "genre": "Acoustic"},
-    {"id": 8, "title": "StarBoy", "artist": "The Weeknd", "file": "starboy.mp3", "image": "starboy.jpg", "genre": "EDM"},
-    {"id": 9, "title": "KuLoSa", "artist": "Oxlade", "file": "kulosa.mp3", "image": "kulosa.jpg", "genre": "Lo-fi"},
-    {"id": 10, "title": "Espresso", "artist": "Sabrina Carpenter", "file": "espresso.mp3", "image": "espresso.png", "genre": "Pop"},
-    {"id": 11, "title": "Middle of the night", "artist": "Elley Duhe", "file": "middleofthenight.mp3", "image": "middleofthenight.png", "genre": "EDM"},
-    {"id": 12, "title": "One Dance", "artist": "Drake", "file": "onedance.mp3", "image": "onedance.png", "genre": "Rap/Hip-Hop"},
-    {"id": 13, "title": "Shape of you", "artist": "Ed Sheeran", "file": "shapeofyou.mp3", "image": "shapeofyou.png", "genre": "Pop"},
-    {"id": 14, "title": "Taki Taki", "artist": "Dj Snake", "file": "takitaki.mp3", "image": "takitaki.png", "genre": "EDM"},
-    {"id": 15, "title": "Let me Love You", "artist": "Justin Bieber", "file": "letmeloveyou.mp3", "image": "letmeloveyou.jpg", "genre": "Pop"},
-    {"id": 16, "title": "Perfect", "artist": "Ed Sheeran", "file": "perfect.mp3", "image": "perfect.jpg", "genre": "Acoustic"},
-    {"id": 17, "title": "Moral of the Story", "artist": "Ashe", "file": "moralofthestory.mp3", "image": "moralofthestory.jpg", "genre": "Acoustic"},
-    {"id": 18, "title": "Runaway", "artist": "Aurora", "file": "runaway.mp3", "image": "runaway.png", "genre": "Lo-fi"},
-    {"id": 19, "title": "Snowman", "artist": "Sia", "file": "snowman.mp3", "image": "snowman.jpeg", "genre": "Lo-fi"},
-    {"id": 20, "title": "Cheap Thrills", "artist": "Sia", "file": "cheapthrills.mp3", "image": "cheapthrills.png", "genre": "Pop"},
-    {"id": 21, "title": "Happy", "artist": "Pharrell Williams", "file": "happy.mp3", "image": "happy.jpg", "genre": "Pop"},
-    {"id": 22, "title": "Believer", "artist": "Imagine Dragons", "file": "beliver.mp3", "image": "believer.jpg", "genre": "Rock"},
-    {"id": 23, "title": "Night Changes", "artist": "One Direction", "file": "nightchanges.mp3", "image": "nightchanges.png", "genre": "Acoustic"},
-    {"id": 24, "title": "Closer", "artist": "Chainsmokers", "file": "closer.mp3", "image": "closer.png", "genre": "EDM"},
-    {"id": 25, "title": "Lover", "artist": "Taylor Swift", "file": "lover.mp3", "image": "lover.png", "genre": "Pop"},
-    {"id": 26, "title": "Story of my Life", "artist": "One Direction", "file": "storyofmylife.mp3", "image": "storyofmylife.png", "genre": "Pop"},
-    {"id": 27, "title": "Perfect", "artist": "One Direction", "file": "perfect2.mp3", "image": "perfect2.png", "genre": "Acoustic"},
-    {"id": 28, "title": "Until I Found You", "artist": "Stephen Sanchez", "file": "untilifoundyou.mp3", "image": "untilifoundyou.png", "genre": "Lofi"},
-    {"id": 29, "title": "Good For You", "artist": "Selena Gomez", "file": "goodforyou.mp3", "image": "goodforyou.png", "genre": "Pop"},
-    {"id": 30, "title": "I Wanna Be Yours", "artist": "Arctic Monkeys", "file": "iwannabeyours.mp3", "image": "iwannabeyours.jpg", "genre": "Rock"},
-    {"id": 31, "title": "Animals", "artist": "Maroon 5", "file": "animals.mp3", "image": "animals.png", "genre": "Pop"},
-    {"id": 32, "title": "As It Was", "artist": "Harry Styles", "file": "asitwas.mp3", "image": "asitwas.png", "genre": "Pop"},
+    {"id": 1, "title": "Iris Out", "artist": "Kenshi Yonezu", "file": "irisOut.mp3", "image": "irisOut.webp", "genre": "Lo-fi", "language": "English"},
+    {"id": 2, "title": "Blinding Lights", "artist": "The Weeknd", "file": "blindingLights.mp3", "image": "blindingLights.png", "genre": "Pop", "language": "English"},
+    {"id": 3, "title": "Let the world burn", "artist": "Chris Grey", "file": "lettheworldburn.mp3", "image": "lettheworldburn.jpg", "genre": "Rock", "language": "English"},
+    {"id": 4, "title": "Saphire", "artist": "Ed Sheeran", "file": "saphire.mp3", "image": "saphire.png", "genre": "Acoustic", "language": "English"},
+    {"id": 5, "title": "Specialz", "artist": "King Gnu", "file": "specialz.mp3", "image": "specialz.jpg", "genre": "Rock", "language": "English"},
+    {"id": 6, "title": "Superpower", "artist": "Kiss of Life", "file": "superpower.mp3", "image": "superpower.webp", "genre": "Pop", "language": "English"},
+    {"id": 7, "title": "Just Keep Watching", "artist": "Tate McRae", "file": "justkeepwatching.mp3", "image": "justkeepwatching.png", "genre": "Acoustic", "language": "English"},
+    {"id": 8, "title": "StarBoy", "artist": "The Weeknd", "file": "starboy.mp3", "image": "starboy.jpg", "genre": "EDM", "language": "English"},
+    {"id": 9, "title": "KuLoSa", "artist": "Oxlade", "file": "kulosa.mp3", "image": "kulosa.jpg", "genre": "Lo-fi", "language": "English"},
+    {"id": 10, "title": "Espresso", "artist": "Sabrina Carpenter", "file": "espresso.mp3", "image": "espresso.png", "genre": "Pop", "language": "English"},
+    {"id": 11, "title": "Middle of the night", "artist": "Elley Duhe", "file": "middleofthenight.mp3", "image": "middleofthenight.png", "genre": "EDM", "language": "English"},
+    {"id": 12, "title": "One Dance", "artist": "Drake", "file": "onedance.mp3", "image": "onedance.png", "genre": "Rap/Hip-Hop", "language": "English"},
+    {"id": 13, "title": "Shape of you", "artist": "Ed Sheeran", "file": "shapeofyou.mp3", "image": "shapeofyou.png", "genre": "Pop", "language": "English"},
+    {"id": 14, "title": "Taki Taki", "artist": "Dj Snake", "file": "takitaki.mp3", "image": "takitaki.png", "genre": "EDM", "language": "English"},
+    {"id": 15, "title": "Let me Love You", "artist": "Justin Bieber", "file": "letmeloveyou.mp3", "image": "letmeloveyou.jpg", "genre": "Pop", "language": "English"},
+    {"id": 16, "title": "Perfect", "artist": "Ed Sheeran", "file": "perfect.mp3", "image": "perfect.jpg", "genre": "Acoustic", "language": "English"},
+    {"id": 17, "title": "Moral of the Story", "artist": "Ashe", "file": "moralofthestory.mp3", "image": "moralofthestory.jpg", "genre": "Acoustic", "language": "English"},
+    {"id": 18, "title": "Runaway", "artist": "Aurora", "file": "runaway.mp3", "image": "runaway.png", "genre": "Lo-fi", "language": "English"},
+    {"id": 19, "title": "Snowman", "artist": "Sia", "file": "snowman.mp3", "image": "snowman.jpeg", "genre": "Lo-fi", "language": "English"},
+    {"id": 20, "title": "Cheap Thrills", "artist": "Sia", "file": "cheapthrills.mp3", "image": "cheapthrills.png", "genre": "Pop", "language": "English"},
+    {"id": 21, "title": "Happy", "artist": "Pharrell Williams", "file": "happy.mp3", "image": "happy.jpg", "genre": "Pop", "language": "English"},
+    {"id": 22, "title": "Believer", "artist": "Imagine Dragons", "file": "beliver.mp3", "image": "believer.jpg", "genre": "Rock", "language": "English"},
+    {"id": 23, "title": "Night Changes", "artist": "One Direction", "file": "nightchanges.mp3", "image": "nightchanges.png", "genre": "Acoustic", "language": "English"},
+    {"id": 24, "title": "Closer", "artist": "Chainsmokers", "file": "closer.mp3", "image": "closer.png", "genre": "EDM", "language": "English"},
+    {"id": 25, "title": "Lover", "artist": "Taylor Swift", "file": "lover.mp3", "image": "lover.png", "genre": "Pop", "language": "English"},
+    {"id": 26, "title": "Story of my Life", "artist": "One Direction", "file": "storyofmylife.mp3", "image": "storyofmylife.png", "genre": "Pop", "language": "English"},
+    {"id": 27, "title": "Perfect", "artist": "One Direction", "file": "perfect2.mp3", "image": "perfect2.png", "genre": "Acoustic", "language": "English"},
+    {"id": 28, "title": "Until I Found You", "artist": "Stephen Sanchez", "file": "untilifoundyou.mp3", "image": "untilifoundyou.png", "genre": "Lo-fi", "language": "English"},
+    {"id": 29, "title": "Good For You", "artist": "Selena Gomez", "file": "goodforyou.mp3", "image": "goodforyou.png", "genre": "Pop", "language": "English"},
+    {"id": 30, "title": "I Wanna Be Yours", "artist": "Arctic Monkeys", "file": "iwannabeyours.mp3", "image": "iwannabeyours.jpg", "genre": "Rock", "language": "English"},
+    {"id": 31, "title": "Animals", "artist": "Maroon 5", "file": "animals.mp3", "image": "animals.png", "genre": "Pop", "language": "English"},
+    {"id": 32, "title": "As It Was", "artist": "Harry Styles", "file": "asitwas.mp3", "image": "asitwas.png", "genre": "Pop", "language": "English"},
+    {"id": 33, "title": "Softcore", "artist": "The Neighbourhood", "file": "softcore.mp3", "image": "neighbourhood.jpg", "genre": "Lo-fi", "language": "English"},
+    {"id": 34, "title": "Danza Kuduro", "artist": "Don Omar ft. Lucenzo", "file": "danzakuduro.mp3", "image": "danzakudro.jpg", "genre": "EDM", "language": "Spanish"},
+    {"id": 35, "title": "Tainu Khabar Nahi", "artist": "Arijit Singh", "file": "tainukhabarnahi.mp3", "image": "tainukhabarnahi.jpg", "genre": "Acoustic", "language": "Hindi"},
+    {"id": 36, "title": "Jeena Jeena", "artist": "Atif Aslam", "file": "jeenajeena.mp3", "image": "jeenajeena.jpeg", "genre": "Acoustic", "language": "Hindi"},
+    {"id": 37, "title": "Akhiyan Gulab", "artist": "Mitraz", "file": "akhiyangulab.mp3", "image": "akhiyaangulab.jpg", "genre": "Acoustic", "language": "Hindi"},
+    {"id": 38, "title": "Apna Bana Le", "artist": "Arijit Singh", "file": "apnabanale.mp3", "image": "apnabanale.jpg", "genre": "Acoustic", "language": "Hindi"},
+    {"id": 35, "title": "Tainu Khabar Nahi", "artist": "Arijit Singh", "file": "tainukhabarnahi.mp3", "image": "tainukhabarnahi.jpg", "genre": "Acoustic", "language": "Hindi"},
+{"id": 36, "title": "Jeena Jeena", "artist": "Atif Aslam", "file": "jeenajeena.mp3", "image": "jeenajeena.jpeg", "genre": "Acoustic", "language": "Hindi"},
+{"id": 37, "title": "Akhiyan Gulab", "artist": "Mitraz", "file": "akhiyangulab.mp3", "image": "akhiyaangulab.jpg", "genre": "Acoustic", "language": "Hindi"},
+{"id": 38, "title": "Apna Bana Le", "artist": "Arijit Singh", "file": "apnabanale.mp3", "image": "apnabanale.jpg", "genre": "Acoustic", "language": "Hindi"},
+{"id": 39, "title": "Mast Magan", "artist": "Arijit Singh", "file": "mastmagan.mp3", "image": "mastmagan.jpg", "genre": "Acoustic", "language": "Hindi"},
+{"id": 40, "title": "Chaleya", "artist": "Arijit Singh", "file": "chaleya.mp3", "image": "chaleya.jpg", "genre": "Acoustic", "language": "Hindi"},
+{"id": 41, "title": "Jo Tum Na Ho", "artist": "Arijit Singh", "file": "jotumnoho.mp3", "image": "jotumnaho.jpg", "genre": "Acoustic", "language": "Hindi"},
+{"id": 42, "title": "Deva Deva", "artist": "Arijit Singh", "file": "devadeva.mp3", "image": "devadeva.jpg", "genre": "Acoustic", "language": "Hindi"},
+
+
+
 
 ]
 
 
+
 # --- ROUTES --- #
+
 
 @app.route('/')
 def index():
     if 'user' not in session:
         return redirect(url_for('login'))
-    return render_template('index.html', songs=SONGS, user=session['user'])
 
+    sort_by = request.args.get('sort', None)
+
+    # ✅ Always start fresh with a clean copy
+    songs_list = SONGS[:]  
+
+    # Randomize by default
+    random.shuffle(songs_list)
+
+    # Sort when requested
+    if sort_by == 'language':
+        songs_list = sorted(songs_list, key=lambda x: x['language'])
+
+    return render_template('index.html', songs=songs_list, user=session['user'], sort_by=sort_by)
 
 @app.route('/search')
 def search():

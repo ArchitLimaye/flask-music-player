@@ -745,5 +745,30 @@ body {
   overflow: hidden;
 }
 
+.sort-container {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: white;
+}
+
+.sort-label {
+  font-weight: 500;
+}
+
+.sort-container select {
+  background-color: #1e1e1e;
+  color: white;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.sort-container select:hover {
+  background-color: #333;
+}
 
 
